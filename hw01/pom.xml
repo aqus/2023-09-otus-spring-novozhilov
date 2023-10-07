@@ -104,7 +104,7 @@
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>ru.otus.spring.Main</mainClass>
+                                    <mainClass>ru.otus.spring.Application</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
