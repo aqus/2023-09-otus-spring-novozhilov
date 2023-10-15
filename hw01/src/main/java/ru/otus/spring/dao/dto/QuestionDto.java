@@ -13,15 +13,18 @@ import ru.otus.spring.domain.Question;
 public class QuestionDto {
     
     @CsvBindByPosition(position = 0)
-    private final String text;
+    private String text;
 
     @CsvBindAndSplitByPosition(position = 1, collectionType = ArrayList.class, elementType = Answer.class,
             converter = AnswerCsvConverter.class, splitOn = "\\|")
-    private final List<Answer> answers;
+    private List<Answer> answers;
 
     public QuestionDto(String text, List<Answer> answers) {
         this.text = text;
         this.answers = answers;
+    }
+
+    public QuestionDto() {
     }
 
     public Question toDomainObject() {
@@ -34,6 +37,14 @@ public class QuestionDto {
 
     public List<Answer> getAnswers() {
         return answers;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public void setAnswers(List<Answer> answers) {
+        this.answers = answers;
     }
 
     @Override

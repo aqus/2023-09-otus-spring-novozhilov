@@ -8,6 +8,9 @@ import ru.otus.spring.domain.Answer;
 
 public class AnswerCsvConverter extends AbstractCsvConverter {
 
+    public AnswerCsvConverter() {
+    }
+
     @Override
     public Object convertToRead(String value) throws CsvDataTypeMismatchException, CsvConstraintViolationException {
         String[] answerData = value.split("%");

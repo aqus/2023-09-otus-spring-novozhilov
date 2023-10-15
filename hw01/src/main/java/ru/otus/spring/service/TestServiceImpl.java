@@ -1,9 +1,10 @@
 package ru.otus.spring.service;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
+import java.util.List;
 
 import ru.otus.spring.dao.QuestionDao;
+import ru.otus.spring.domain.Answer;
+import ru.otus.spring.domain.Question;
 import ru.otus.spring.exceptions.QuestionReadException;
 
 public class TestServiceImpl implements TestService {
@@ -19,13 +20,18 @@ public class TestServiceImpl implements TestService {
     @Override
     public void executeTest() {
         ioService.printLine("");
-        ioService.printFormattedLine("Please answer the questions below%n");
+        ioService.printFormattedLine("Please answer the questions below");
         try {
-            questionDao.findAll();
-        } catch (URISyntaxException e) {
-            throw new QuestionReadException("Ошибка чтения вопросов для теста", e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            List<Question> questions = questionDao.findAll();
+            for (Question question : questions) {
+                ioService.printFormattedLine("%n" + question.text());
+                
+                for (Answer answer : question.answers()) {
+                    ioService.printLine(answer.text());
+                }
+            }
+        } catch (Exception e) {
+            throw new QuestionReadException("Ошибка чтения вопросов для теста", e.getCause());
         }
     }
 }
