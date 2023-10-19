@@ -8,7 +8,6 @@ import ru.otus.spring.domain.Question;
 import ru.otus.spring.exceptions.QuestionReadException;
 
 public class TestServiceImpl implements TestService {
-    
     private final IOService ioService;
     private final QuestionDao questionDao;
 
@@ -23,15 +22,19 @@ public class TestServiceImpl implements TestService {
         ioService.printFormattedLine("Please answer the questions below");
         try {
             List<Question> questions = questionDao.findAll();
-            for (Question question : questions) {
-                ioService.printFormattedLine("%n" + question.text());
-                
-                for (Answer answer : question.answers()) {
-                    ioService.printLine(answer.text());
-                }
-            }
+            printQuestions(questions);
         } catch (Exception e) {
             throw new QuestionReadException("Ошибка чтения вопросов для теста", e.getCause());
+        }
+    }
+
+    private void printQuestions(List<Question> questions) {
+        for (Question question : questions) {
+            ioService.printFormattedLine("%n" + question.text());
+
+            for (Answer answer : question.answers()) {
+                ioService.printLine(answer.text());
+            }
         }
     }
 }
