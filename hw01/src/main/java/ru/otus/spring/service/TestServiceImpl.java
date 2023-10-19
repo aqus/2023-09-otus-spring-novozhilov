@@ -9,6 +9,7 @@ import ru.otus.spring.exceptions.QuestionReadException;
 
 public class TestServiceImpl implements TestService {
     private final IOService ioService;
+
     private final QuestionDao questionDao;
 
     public TestServiceImpl(IOService ioService, QuestionDao dao) {
