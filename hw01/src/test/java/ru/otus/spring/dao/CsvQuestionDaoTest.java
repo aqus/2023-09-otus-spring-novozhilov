@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -23,13 +24,13 @@ public class CsvQuestionDaoTest {
     private final static String TEST_FILE_NAME = "test.csv";
 
     @Mock
-    TestFileNameProvider testFileNameProvider;
-    private QuestionDao questionDao;
+    private TestFileNameProvider testFileNameProvider;
+    @InjectMocks
+    private CsvQuestionDao questionDao;
 
     @BeforeEach
     void setUp() {
         given(testFileNameProvider.getTestFileName()).willReturn(TEST_FILE_NAME);
-        questionDao = new CsvQuestionDao(testFileNameProvider);
     }
 
     @DisplayName("Read all the questions from dao")
