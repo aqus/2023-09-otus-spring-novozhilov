@@ -38,8 +38,9 @@ public class CsvQuestionDao implements QuestionDao {
         }
 
         List<QuestionDto> parsedQuestions;
-        CSVReader reader = new CSVReader(new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)));
-        try (reader; inputStream) {
+        try (InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+             CSVReader reader = new CSVReader(bufferedReader)) {
             ColumnPositionMappingStrategy<QuestionDto> strategy = new ColumnPositionMappingStrategy<>();
             strategy.setType(QuestionDto.class);
             CsvToBean<QuestionDto> csvToBean = new CsvToBeanBuilder<QuestionDto>(reader)
