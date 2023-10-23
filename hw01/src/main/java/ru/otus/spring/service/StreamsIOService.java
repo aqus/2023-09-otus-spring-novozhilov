@@ -1,17 +1,22 @@
 package ru.otus.spring.service;
 
+import java.io.PrintStream;
+
 public class StreamsIOService implements IOService {
     
-    public StreamsIOService() {
+    private final PrintStream printStream;
+
+    public StreamsIOService(PrintStream printStream) {
+        this.printStream = printStream;
     }
 
     @Override
     public void printLine(String s) {
-        System.out.println(s);
+        printStream.println(s);
     }
 
     @Override
     public void printFormattedLine(String s, Object... args) {
-        System.out.printf(s + "%n", args);
+        printStream.printf(s + "%n", args);
     }
 }
