@@ -25,16 +25,16 @@ public class CsvQuestionDao implements QuestionDao {
     }
 
     @Override
-    public List<Question> findAll() throws QuestionReadException {
+    public List<Question> findAll() {
         return getQuestionsFromFile(testFileNameProvider.getTestFileName());
     }
 
-    private List<Question> getQuestionsFromFile(String testFileName) throws QuestionReadException {
+    private List<Question> getQuestionsFromFile(String testFileName) {
         ClassLoader classLoader = getClass().getClassLoader();
         InputStream inputStream = classLoader.getResourceAsStream(testFileName);
 
         if (inputStream == null) {
-            throw new RuntimeException("Questions input stream is null");
+            throw new QuestionReadException("Questions input stream is null");
         }
 
         List<QuestionDto> parsedQuestions;
@@ -49,7 +49,7 @@ public class CsvQuestionDao implements QuestionDao {
                     .build();
             parsedQuestions = csvToBean.parse();
         } catch (Exception e) {
-            throw new QuestionReadException("Ошибка чтения вопросов для теста", e.getCause());
+            throw new QuestionReadException("While reading the test questions", e.getCause());
         }
 
         return parsedQuestions.stream().map(QuestionDto::toDomainObject).toList();

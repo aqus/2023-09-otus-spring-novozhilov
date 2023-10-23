@@ -7,5 +7,5 @@ import ru.otus.spring.exceptions.QuestionReadException;
 
 public interface QuestionDao {
     
-    List<Question> findAll() throws QuestionReadException;
+    List<Question> findAll();
 }

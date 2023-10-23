@@ -25,7 +25,7 @@ public class TestServiceImpl implements TestService {
             List<Question> questions = questionDao.findAll();
             printQuestions(questions);
         } catch (Exception e) {
-            throw new QuestionReadException("Ошибка чтения вопросов для теста", e.getCause());
+            throw new Error("Ошибка чтения вопросов для теста", e.getCause());
         }
     }
 
