@@ -37,10 +37,10 @@ public class CsvQuestionDao implements QuestionDao {
             throw new QuestionReadException("Questions input stream is null");
         }
 
-        List<QuestionDto> parsedQuestions;
         try (InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
              BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
              CSVReader reader = new CSVReader(bufferedReader)) {
+            List<QuestionDto> parsedQuestions;
             ColumnPositionMappingStrategy<QuestionDto> strategy = new ColumnPositionMappingStrategy<>();
             strategy.setType(QuestionDto.class);
             CsvToBean<QuestionDto> csvToBean = new CsvToBeanBuilder<QuestionDto>(reader)
@@ -48,10 +48,9 @@ public class CsvQuestionDao implements QuestionDao {
                     .withIgnoreLeadingWhiteSpace(true)
                     .build();
             parsedQuestions = csvToBean.parse();
+            return parsedQuestions.stream().map(QuestionDto::toDomainObject).toList();
         } catch (Exception e) {
             throw new QuestionReadException("While reading the test questions", e.getCause());
         }
-
-        return parsedQuestions.stream().map(QuestionDto::toDomainObject).toList();
     }
 }
