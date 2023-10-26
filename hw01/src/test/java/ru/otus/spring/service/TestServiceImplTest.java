@@ -2,43 +2,37 @@ package ru.otus.spring.service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-import ru.otus.spring.config.TestFileNameProvider;
-import ru.otus.spring.dao.CsvQuestionDao;
+import ru.otus.spring.dao.QuestionDao;
+import ru.otus.spring.domain.Answer;
+import ru.otus.spring.domain.Question;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @DisplayName("TestServiceImplTest class")
-@ExtendWith(MockitoExtension.class)
 public class TestServiceImplTest {
-
-    private final static String TEST_FILE_NAME = "test.csv";
-
-    @Mock
-    private TestFileNameProvider testFileNameProvider;
 
     private IOService ioService;
 
-    private CsvQuestionDao questionDao;
+    private QuestionDao questionDao;
 
-    private TestServiceImpl testService;
+    private TestService testService;
 
-    private final ByteArrayOutputStream resultOutput = new ByteArrayOutputStream();
+    private ByteArrayOutputStream resultOutput;
 
     @BeforeEach
     void setUp() {
+        resultOutput = new ByteArrayOutputStream();
         System.setOut(new PrintStream(resultOutput));
-        given(testFileNameProvider.getTestFileName()).willReturn(TEST_FILE_NAME);
+        questionDao = mock(QuestionDao.class);
         ioService = new StreamsIOService(System.out);
-        questionDao = new CsvQuestionDao(testFileNameProvider);
         testService = new TestServiceImpl(ioService, questionDao);
     }
 
@@ -54,6 +48,12 @@ public class TestServiceImplTest {
                 Saturday
                 Sunday
                 """;
+        Question expectedQuestion = new Question("What was the day on 15th august 1947?", List.of(
+                new Answer("Friday", true),
+                new Answer("Saturday", false),
+                new Answer("Sunday", false)));
+        List<Question> expectedQuestions = List.of(expectedQuestion);
+        when(questionDao.findAll()).thenReturn(expectedQuestions);
         testService.executeTest();
         assertEquals(expectedOutput, resultOutput.toString());
     }

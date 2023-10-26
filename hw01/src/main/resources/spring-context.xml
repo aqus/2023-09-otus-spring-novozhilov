@@ -9,7 +9,7 @@
 
     <bean id="ioService" class="ru.otus.spring.service.StreamsIOService">
         <constructor-arg index="0">
-            <util:constant id="systemOut" static-field="java.lang.System.out"/>
+            <util:constant static-field="java.lang.System.out"/>
         </constructor-arg>
     </bean>
     
