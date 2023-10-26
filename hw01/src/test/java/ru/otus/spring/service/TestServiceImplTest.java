@@ -48,12 +48,12 @@ public class TestServiceImplTest {
                 Saturday
                 Sunday
                 """;
-        Question expectedQuestion = new Question("What was the day on 15th august 1947?", List.of(
+        Question returnQuestion = new Question("What was the day on 15th august 1947?", List.of(
                 new Answer("Friday", true),
                 new Answer("Saturday", false),
                 new Answer("Sunday", false)));
-        List<Question> expectedQuestions = List.of(expectedQuestion);
-        when(questionDao.findAll()).thenReturn(expectedQuestions);
+        List<Question> returnQuestions = List.of(returnQuestion);
+        when(questionDao.findAll()).thenReturn(returnQuestions);
         testService.executeTest();
         assertEquals(expectedOutput, resultOutput.toString());
     }
