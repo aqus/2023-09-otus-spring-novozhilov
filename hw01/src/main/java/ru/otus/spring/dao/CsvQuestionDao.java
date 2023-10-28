@@ -50,7 +50,7 @@ public class CsvQuestionDao implements QuestionDao {
             parsedQuestions = csvToBean.parse();
             return parsedQuestions.stream().map(QuestionDto::toDomainObject).toList();
         } catch (Exception e) {
-            throw new QuestionReadException("While reading the test questions", e.getCause());
+            throw new QuestionReadException("While reading the test questions", e);
         }
     }
 }
