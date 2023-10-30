@@ -15,9 +15,9 @@ public class TestServiceImplTest {
     @Mock
     private TestServiceImpl testService;
 
-    @DisplayName("Should print all the questions")
+    @DisplayName("Execute test method should be called")
     @Test
-    void shouldPrintAllTheQuestions() {
+    void executeTestMethodShouldBeCalled() {
         testService.executeTest();
         verify(testService).executeTest();
     }
