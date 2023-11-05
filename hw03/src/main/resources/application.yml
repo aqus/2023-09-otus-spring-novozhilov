@@ -1,0 +1,3 @@
+test:
+  testFileName: test.csv
+  rightAnswersCountToPass: 3
