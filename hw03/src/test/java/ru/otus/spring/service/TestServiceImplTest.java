@@ -40,9 +40,9 @@ public class TestServiceImplTest {
         when(localizationService.getMessage(anyString())).thenReturn(anyString());
     }
     
-    @DisplayName("Execute test method should be called")
+    @DisplayName("Execute test method for student should be called")
     @Test
-    void executeTestMethodShouldBeCalled() {
+    void executeTestMethodForStudentShouldBeCalled() {
         Student student = new Student("Vasya", "Pupkin");
         TestResult expectedTestResult = new TestResult(student);
         TestResult testResult = testService.executeTestFor(student);
