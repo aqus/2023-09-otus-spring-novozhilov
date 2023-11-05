@@ -11,24 +11,30 @@ public class ResultServiceImpl implements ResultService {
     private final TestConfig testConfig;
 
     private final IOService ioService;
+    
+    private final LocalizationService localizationService;
 
-    public ResultServiceImpl(TestConfig testConfig, IOService ioService) {
+    public ResultServiceImpl(TestConfig testConfig, IOService ioService, LocalizationService localizationService) {
         this.testConfig = testConfig;
         this.ioService = ioService;
+        this.localizationService = localizationService;
     }
 
     @Override
     public void showResult(TestResult testResult) {
         ioService.printLine("");
-        ioService.printLine("Test results: ");
-        ioService.printFormattedLine("Student: %s", testResult.getStudent().getFullName());
-        ioService.printFormattedLine("Answered questions count: %d", testResult.getAnsweredQuestions().size());
-        ioService.printFormattedLine("Right answers count: %d", testResult.getRightAnswersCount());
+        ioService.printLine(localizationService.getMessage("test.results.title"));
+        ioService.printFormattedLine(localizationService.getMessage("test.student.title"),
+                testResult.getStudent().getFullName());
+        ioService.printFormattedLine(localizationService.getMessage("test.answered.count"),
+                testResult.getAnsweredQuestions().size());
+        ioService.printFormattedLine(localizationService.getMessage("test.right.answers"),
+                testResult.getRightAnswersCount());
 
         if (testResult.getRightAnswersCount() >= testConfig.getRightAnswersCountToPass()) {
-            ioService.printLine("Congratulations! You have passed the test!");
+            ioService.printLine(localizationService.getMessage("test.success"));
             return;
         }
-        ioService.printLine("Sorry. You have failed the test.");
+        ioService.printLine(localizationService.getMessage("test.fail"));
     }
 }

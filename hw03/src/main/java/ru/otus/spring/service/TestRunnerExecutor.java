@@ -2,7 +2,7 @@ package ru.otus.spring.service;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import ru.otus.spring.domain.Student;
 import ru.otus.spring.domain.TestResult;
@@ -13,7 +13,7 @@ import ru.otus.spring.domain.TestResult;
         havingValue = "true",
         matchIfMissing = true
 )
-@Service
+@Component
 public class TestRunnerExecutor implements CommandLineRunner {
     
     private final TestService testService;

@@ -16,16 +16,19 @@ public class TestServiceImpl implements TestService {
     private final IOService ioService;
 
     private final QuestionDao questionDao;
+    
+    private final LocalizationService localizationService;
 
-    public TestServiceImpl(IOService ioService, QuestionDao dao) {
+    public TestServiceImpl(IOService ioService, QuestionDao dao, LocalizationService localizationService) {
         this.ioService = ioService;
         this.questionDao = dao;
+        this.localizationService = localizationService;
     }
 
     @Override
     public TestResult executeTestFor(Student student) {
         ioService.printLine("");
-        ioService.printFormattedLine("Please answer the questions below%n");
+        ioService.printFormattedLine(localizationService.getMessage("test.title"));
         List<Question> questions = questionDao.findAll();
         TestResult testResult = new TestResult(student);
 
@@ -44,7 +47,7 @@ public class TestServiceImpl implements TestService {
             stringBuilder.append(answer.text()).append("\n");
         }
         int answerNumber = ioService.readIntForRangeWithPrompt(1, answers.size(), stringBuilder.toString(),
-                "Please, choose correct answer number from presented range");
+                localizationService.getMessage("test.invalid.answer.number"));
         return answers.get(answerNumber - 1);
     }
 }

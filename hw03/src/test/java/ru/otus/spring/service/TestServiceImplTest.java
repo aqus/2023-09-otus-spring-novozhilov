@@ -1,5 +1,6 @@
 package ru.otus.spring.service;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +17,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 @DisplayName("TestServiceImplTest class")
 @ExtendWith(MockitoExtension.class)
@@ -26,9 +28,17 @@ public class TestServiceImplTest {
     
     @Mock
     CsvQuestionDao dao;
+    
+    @Mock
+    LocalizationService localizationService;
 
     @InjectMocks
     private TestServiceImpl testService;
+    
+    @BeforeEach
+    void setUp() {
+        when(localizationService.getMessage(anyString())).thenReturn(anyString());
+    }
     
     @DisplayName("Execute test method should be called")
     @Test
@@ -39,6 +49,7 @@ public class TestServiceImplTest {
         assertEquals(expectedTestResult, testResult);
         verify(ioService, times(1)).printLine(anyString());
         verify(ioService, times(1)).printFormattedLine(anyString());
+        verify(localizationService, times(1)).getMessage(anyString());
         verify(dao, times(1)).findAll();
     }
 }
