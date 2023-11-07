@@ -24,13 +24,13 @@ import static org.mockito.Mockito.when;
 public class TestServiceImplTest {
     
     @Mock
-    StreamsIOService ioService;
+    private StreamsIOService ioService;
     
     @Mock
-    CsvQuestionDao dao;
+    private CsvQuestionDao dao;
     
     @Mock
-    LocalizationService localizationService;
+    private LocalizationService localizationService;
 
     @InjectMocks
     private TestServiceImpl testService;
