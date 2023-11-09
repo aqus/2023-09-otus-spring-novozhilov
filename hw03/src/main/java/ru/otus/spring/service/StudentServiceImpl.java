@@ -6,20 +6,17 @@ import ru.otus.spring.domain.Student;
 
 @Service
 public class StudentServiceImpl implements StudentService {
-
-    private final IOService ioService;
     
-    private final LocalizationService localizationService;
+    private final PrinterFacade printerFacade;
 
-    public StudentServiceImpl(IOService ioService, LocalizationService localizationService) {
-        this.ioService = ioService;
-        this.localizationService = localizationService;
+    public StudentServiceImpl(PrinterFacade printerFacade) {
+        this.printerFacade = printerFacade;
     }
 
     @Override
     public Student determineCurrentStudent() {
-        String firstName = ioService.readStringWithPrompt(localizationService.getMessage("test.first.name"));
-        String lastName = ioService.readStringWithPrompt(localizationService.getMessage("test.last.name"));
+        String firstName = printerFacade.readStringWithPrompt("test.first.name");
+        String lastName = printerFacade.readStringWithPrompt("test.last.name");
         return new Student(firstName, lastName);
     }
 }

@@ -17,18 +17,17 @@ public class TestServiceImpl implements TestService {
 
     private final QuestionDao questionDao;
     
-    private final LocalizationService localizationService;
+    private final PrinterFacade printerFacade;
 
-    public TestServiceImpl(IOService ioService, QuestionDao dao, LocalizationService localizationService) {
+    public TestServiceImpl(IOService ioService, QuestionDao dao, PrinterFacade printerFacade) {
         this.ioService = ioService;
         this.questionDao = dao;
-        this.localizationService = localizationService;
+        this.printerFacade = printerFacade;
     }
 
     @Override
     public TestResult executeTestFor(Student student) {
-        ioService.printLine("");
-        ioService.printFormattedLine(localizationService.getMessage("test.title"));
+        printerFacade.printFormattedLine("test.title");
         List<Question> questions = questionDao.findAll();
         TestResult testResult = new TestResult(student);
 
@@ -46,8 +45,8 @@ public class TestServiceImpl implements TestService {
         for (Answer answer : answers) {
             stringBuilder.append(answer.text()).append("\n");
         }
-        int answerNumber = ioService.readIntForRangeWithPrompt(1, answers.size(), stringBuilder.toString(),
-                localizationService.getMessage("test.invalid.answer.number"));
+        int answerNumber = printerFacade.readIntForRangeWithPrompt(1, answers.size(), stringBuilder.toString(),
+                "test.invalid.answer.number");
         return answers.get(answerNumber - 1);
     }
 }

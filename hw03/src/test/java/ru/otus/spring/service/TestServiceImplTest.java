@@ -30,15 +30,10 @@ public class TestServiceImplTest {
     private CsvQuestionDao dao;
     
     @Mock
-    private LocalizationService localizationService;
+    private PrinterFacade printerFacade;
 
     @InjectMocks
     private TestServiceImpl testService;
-    
-    @BeforeEach
-    void setUp() {
-        when(localizationService.getMessage(anyString())).thenReturn(anyString());
-    }
     
     @DisplayName("Execute test method for student should be called")
     @Test
@@ -47,9 +42,7 @@ public class TestServiceImplTest {
         TestResult expectedTestResult = new TestResult(student);
         TestResult testResult = testService.executeTestFor(student);
         assertEquals(expectedTestResult, testResult);
-        verify(ioService, times(1)).printLine(anyString());
-        verify(ioService, times(1)).printFormattedLine(anyString());
-        verify(localizationService, times(1)).getMessage(anyString());
+        verify(printerFacade, times(1)).printFormattedLine(anyString());
         verify(dao, times(1)).findAll();
     }
 }

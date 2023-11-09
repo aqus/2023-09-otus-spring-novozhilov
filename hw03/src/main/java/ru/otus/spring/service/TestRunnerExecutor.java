@@ -1,18 +1,11 @@
 package ru.otus.spring.service;
 
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import ru.otus.spring.domain.Student;
 import ru.otus.spring.domain.TestResult;
 
-@ConditionalOnProperty(
-        prefix = "test.commandLineRunner",
-        value = "enabled",
-        havingValue = "true",
-        matchIfMissing = true
-)
 @Component
 public class TestRunnerExecutor implements CommandLineRunner {
     

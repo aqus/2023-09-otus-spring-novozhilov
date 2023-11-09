@@ -10,31 +10,24 @@ public class ResultServiceImpl implements ResultService {
 
     private final TestConfig testConfig;
 
-    private final IOService ioService;
-    
-    private final LocalizationService localizationService;
+    private final PrinterFacade printerFacade;
 
-    public ResultServiceImpl(TestConfig testConfig, IOService ioService, LocalizationService localizationService) {
+    public ResultServiceImpl(TestConfig testConfig, PrinterFacade printerFacade) {
         this.testConfig = testConfig;
-        this.ioService = ioService;
-        this.localizationService = localizationService;
+        this.printerFacade = printerFacade;
     }
 
     @Override
     public void showResult(TestResult testResult) {
-        ioService.printLine("");
-        ioService.printLine(localizationService.getMessage("test.results.title"));
-        ioService.printFormattedLine(localizationService.getMessage("test.student.title"),
-                testResult.getStudent().getFullName());
-        ioService.printFormattedLine(localizationService.getMessage("test.answered.count"),
-                testResult.getAnsweredQuestions().size());
-        ioService.printFormattedLine(localizationService.getMessage("test.right.answers"),
-                testResult.getRightAnswersCount());
+        printerFacade.printLine("test.results.title");
+        printerFacade.printFormattedLine("test.student.title", testResult.getStudent().getFullName());
+        printerFacade.printFormattedLine("test.answered.count", testResult.getAnsweredQuestions().size());
+        printerFacade.printFormattedLine("test.right.answers", testResult.getRightAnswersCount());
 
         if (testResult.getRightAnswersCount() >= testConfig.getRightAnswersCountToPass()) {
-            ioService.printLine(localizationService.getMessage("test.success"));
+            printerFacade.printLine("test.success");
             return;
         }
-        ioService.printLine(localizationService.getMessage("test.fail"));
+        printerFacade.printLine("test.fail");
     }
 }
