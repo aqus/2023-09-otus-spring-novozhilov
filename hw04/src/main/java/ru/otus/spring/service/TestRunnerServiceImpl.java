@@ -22,7 +22,6 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 
     @Override
     public void run(Student student) {
-//        Student student = studentService.determineCurrentStudent();
         TestResult testResult = testService.executeTestFor(student);
         resultService.showResult(testResult);
     }
