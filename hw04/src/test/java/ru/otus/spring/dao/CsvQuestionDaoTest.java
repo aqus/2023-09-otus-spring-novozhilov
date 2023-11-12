@@ -5,10 +5,9 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import ru.otus.spring.config.TestFileNameProvider;
 import ru.otus.spring.domain.Answer;
@@ -18,14 +17,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 
 @DisplayName("QuestionDao class")
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = {CsvQuestionDao.class})
 public class CsvQuestionDaoTest {
     
     private final static String TEST_FILE_NAME = "test.csv";
 
-    @Mock
+    @MockBean
     private TestFileNameProvider testFileNameProvider;
-    @InjectMocks
+
+    @Autowired
     private CsvQuestionDao questionDao;
 
     @BeforeEach

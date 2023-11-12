@@ -1,12 +1,12 @@
 package ru.otus.spring.service;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import ru.otus.spring.dao.CsvQuestionDao;
 import ru.otus.spring.domain.Student;
@@ -20,19 +20,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @DisplayName("TestServiceImplTest class")
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 public class TestServiceImplTest {
     
-    @Mock
+    @MockBean
     private StreamsIOService ioService;
     
-    @Mock
+    @MockBean
     private CsvQuestionDao dao;
     
-    @Mock
+    @MockBean
     private PrinterFacade printerFacade;
 
-    @InjectMocks
+    @Autowired
     private TestServiceImpl testService;
     
     @DisplayName("Execute test method for student should be called")

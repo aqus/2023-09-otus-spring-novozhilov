@@ -7,11 +7,6 @@ import org.springframework.context.annotation.Configuration;
 @SpringBootTest
 class ApplicationTests {
 
-	@Configuration
-	static class TestConfiguration {
-
-	}
-
 	@Test
 	void contextLoads() {
 	}
