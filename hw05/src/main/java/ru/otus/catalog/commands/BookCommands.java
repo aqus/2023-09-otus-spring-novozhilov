@@ -35,7 +35,8 @@ public class BookCommands {
                 .orElse("Book with id %d not found".formatted(id));
     }
 
-    //bins aaaaaaaaaaaaa 1 1,6//bins aaaaaaaaaaaaa 1 1,6
+    //bins aaaaaaaaaaaaa 1 1,6
+    //bins aaaaaaaaaaaaa 1 1,6
     @ShellMethod(value = "Insert book", key = "bins")
     public String insertBook(String title, long authorId, List<Long> genresIds) {
         var savedBook = bookService.insert(title, authorId, genresIds);

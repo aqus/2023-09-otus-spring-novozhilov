@@ -45,6 +45,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book update(long id, String title, long authorId, List<Long> genresIds) {
+        bookRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Book with id %d is not found".formatted(id)));
         return save(id, title, authorId, genresIds);
     }
 
