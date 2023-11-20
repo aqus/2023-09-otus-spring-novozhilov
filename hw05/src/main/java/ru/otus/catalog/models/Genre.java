@@ -5,6 +5,7 @@ import java.util.Objects;
 public class Genre {
 
     private long id;
+
     private String name;
 
     public Genre(long id, String name) {

@@ -5,6 +5,7 @@ import java.util.Objects;
 public class Author {
 
     private long id;
+
     private String fullName;
 
     public Author(long id, String fullName) {

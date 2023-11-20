@@ -22,7 +22,9 @@ public class BookServiceImpl implements BookService {
     
     private final BookRepository bookRepository;
 
-    public BookServiceImpl(AuthorRepository authorRepository, GenreRepository genreRepository, BookRepository bookRepository) {
+    public BookServiceImpl(AuthorRepository authorRepository,
+                           GenreRepository genreRepository,
+                           BookRepository bookRepository) {
         this.authorRepository = authorRepository;
         this.genreRepository = genreRepository;
         this.bookRepository = bookRepository;

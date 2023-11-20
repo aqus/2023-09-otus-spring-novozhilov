@@ -6,8 +6,11 @@ import java.util.Objects;
 public class Book {
 
     private long id;
+
     private String title;
+
     private Author author;
+
     private List<Genre> genres;
 
     public Book(long id, String title, Author author, List<Genre> genres) {
@@ -61,7 +64,8 @@ public class Book {
             return false;
         }
         Book book = (Book) o;
-        return id == book.id && Objects.equals(title, book.title) && Objects.equals(author, book.author) && Objects.equals(genres, book.genres);
+        return id == book.id && Objects.equals(title, book.title) && Objects.equals(author, book.author)
+                && Objects.equals(genres, book.genres);
     }
 
     @Override

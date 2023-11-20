@@ -2,9 +2,12 @@ package ru.otus.catalog.repositories;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -13,14 +16,11 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import org.springframework.util.CollectionUtils;
-import ru.otus.catalog.exceptions.EntityNotFoundException;
 import ru.otus.catalog.models.Author;
 import ru.otus.catalog.models.Book;
 import ru.otus.catalog.models.Genre;
@@ -28,7 +28,7 @@ import ru.otus.catalog.models.Genre;
 @Repository
 public class BookRepositoryJdbc implements BookRepository {
 
-    private final static Logger LOGGER = Logger.getLogger(BookRepositoryJdbc.class.getSimpleName());
+    private static final Logger LOGGER = Logger.getLogger(BookRepositoryJdbc.class.getSimpleName());
     
     private final GenreRepository genreRepository;
 
@@ -189,31 +189,27 @@ public class BookRepositoryJdbc implements BookRepository {
 
         @Override
         public List<Book> extractData(ResultSet rs) throws SQLException, DataAccessException {
-            HashMap<Long, Book> books = new HashMap<>();
+            Map<Long, Book> books = new HashMap<>();
 
             while (rs.next()) {
                 long id = rs.getLong("id");
                 String title = rs.getString("title");
                 Author author = new Author(rs.getLong("author_id"), rs.getString("full_name"));
                 List<Genre> genres;
-
                 Book prevBook = books.get(id);
                 if (prevBook != null) {
                     genres = prevBook.getGenres();
                 } else {
                     genres = new ArrayList<>();
                 }
-
                 Long genreId = rs.getObject("genre_id", Long.class);
                 if (genreId != null) {
                     String genreName = rs.getString("name");
                     genres.add(new Genre(genreId, genreName));
                 }
-
                 Book bookToAdd = new Book(id, title, author, genres);
                 books.put(id, bookToAdd);
             }
-
             return new ArrayList<>(books.values());
         }
     }
