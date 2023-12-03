@@ -25,6 +25,8 @@ import ru.otus.catalog.models.Author;
 import ru.otus.catalog.models.Book;
 import ru.otus.catalog.models.Genre;
 
+import static java.util.Objects.isNull;
+
 @Repository
 public class BookRepositoryJdbc implements BookRepository {
 
@@ -196,20 +198,19 @@ public class BookRepositoryJdbc implements BookRepository {
                 long id = rs.getLong("id");
                 String title = rs.getString("title");
                 Author author = new Author(rs.getLong("author_id"), rs.getString("full_name"));
-                List<Genre> genres;
-                Book prevBook = books.get(id);
-                if (prevBook != null) {
-                    genres = prevBook.getGenres();
-                } else {
-                    genres = new ArrayList<>();
-                }
                 Long genreId = rs.getObject("genre_id", Long.class);
-                if (genreId != null) {
-                    String genreName = rs.getString("name");
-                    genres.add(new Genre(genreId, genreName));
+
+                Book book = books.get(id);
+                if (isNull(book)) {
+                    book = new Book(id, title, author, new ArrayList<>());
+                    books.put(id, book);
                 }
-                Book bookToAdd = new Book(id, title, author, genres);
-                books.put(id, bookToAdd);
+
+                if (isNull(genreId)) {
+                    continue;
+                }
+
+                book.getGenres().add(new Genre(genreId, rs.getString("name")));
             }
             return new ArrayList<>(books.values());
         }
