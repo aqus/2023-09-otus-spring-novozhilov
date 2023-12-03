@@ -165,8 +165,9 @@ public class BookRepositoryJdbc implements BookRepository {
             return;
         }
 
-        List<BookGenreRelation> bgRelations = new ArrayList<>();
-        book.getGenres().forEach(genre -> bgRelations.add(new BookGenreRelation(book.getId(), genre.getId())));
+        List<BookGenreRelation> bgRelations = book.getGenres().stream()
+                .map(genre -> new BookGenreRelation(book.getId(), genre.getId()))
+                .collect(Collectors.toList());
         namedParameterJdbc.batchUpdate(
                 "INSERT INTO books_genres (book_id, genre_id) VALUES (:bookId, :genreId)",
                 SqlParameterSourceUtils.createBatch(bgRelations));
