@@ -46,7 +46,7 @@ public class BookRepositoryJdbc implements BookRepository {
                 """
                         SELECT b.id, b.title, b.author_id, a.full_name, bg.genre_id, g.name
                         FROM books b
-                        JOIN authors a ON a.id = b.author_id
+                        LEFT JOIN authors a ON a.id = b.author_id
                         LEFT JOIN books_genres bg ON bg.book_id = b.id
                         LEFT JOIN genres g ON g.id = bg.genre_id
                         WHERE b.id = :id
