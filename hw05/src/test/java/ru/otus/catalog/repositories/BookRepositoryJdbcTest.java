@@ -19,7 +19,7 @@ import java.util.stream.IntStream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Репозиторий книг BookRepositoryJdbc")
-@Import({BookRepositoryJdbc.class})
+@Import({BookRepositoryJdbc.class, GenreRepositoryJdbc.class})
 @JdbcTest
 public class BookRepositoryJdbcTest {
 

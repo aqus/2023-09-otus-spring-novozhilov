@@ -56,7 +56,7 @@ public class BookRepositoryJdbc implements BookRepository {
             if (books == null || books.isEmpty()) {
                 return Optional.empty();
             }
-            return Optional.ofNullable(books.get(0));
+            return books.stream().findFirst();
         } catch (DataAccessException e) {
             LOGGER.severe("While getting book by id " + e);
             return Optional.empty();
