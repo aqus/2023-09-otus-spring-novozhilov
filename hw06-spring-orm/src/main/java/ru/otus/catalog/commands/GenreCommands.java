@@ -6,7 +6,6 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 
 import ru.otus.catalog.converters.GenreConverter;
-import ru.otus.catalog.mappers.GenreMapper;
 import ru.otus.catalog.services.GenreService;
 
 @ShellComponent
@@ -24,7 +23,7 @@ public class GenreCommands {
     @ShellMethod(value = "Find all genres", key = "ag")
     public String findAllGenres() {
         return genreService.findAll().stream()
-                .map(genre -> genreConverter.genreToString(GenreMapper.toGenreDto(genre)))
+                .map(genreConverter::genreToString)
                 .collect(Collectors.joining("," + System.lineSeparator()));
     }
 }
