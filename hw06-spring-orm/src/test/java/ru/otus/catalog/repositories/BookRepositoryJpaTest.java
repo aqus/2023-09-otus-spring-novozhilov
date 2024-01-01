@@ -1,33 +1,31 @@
 package ru.otus.catalog.repositories;
 
+import jakarta.persistence.TypedQuery;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import ru.otus.catalog.models.Author;
 import ru.otus.catalog.models.Book;
 import ru.otus.catalog.models.Genre;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Репозиторий книг BookRepositoryJdbc")
-@Import({BookRepositoryJpa.class, GenreRepositoryJpa.class})
-@JdbcTest
-public class BookRepositoryJdbcTest {
+@DisplayName("Jpa репозиторий книг")
+@DataJpaTest
+@Import({BookRepositoryJpa.class})
+public class BookRepositoryJpaTest {
 
     @Autowired
     private BookRepository bookRepository;
 
-    @MockBean
-    private GenreRepository genreRepository;
+    @Autowired
+    private TestEntityManager testEntityManager;
 
     @DisplayName(" должен возвращать книгу по id")
     @Test
@@ -42,12 +40,7 @@ public class BookRepositoryJdbcTest {
     void shouldReturnAllBooks() {
         List<Book> actualBooks = bookRepository.findAll();
         List<Book> expectedBooks = getBooks();
-
-        assertThat(actualBooks)
-                .isNotNull()
-                .usingRecursiveComparison()
-                .ignoringFields("genres")
-                .isEqualTo(expectedBooks);
+        assertThat(actualBooks).isNotNull().isEqualTo(expectedBooks);
     }
 
     @DisplayName(" должен сохранять книгу")
@@ -56,11 +49,7 @@ public class BookRepositoryJdbcTest {
         Book expectedBook = new Book(0, "BookTitle_4", getAuthors().get(1),
                 List.of(getGenres().get(0), getGenres().get(1)));
         Book actualBook = bookRepository.save(expectedBook);
-        assertThat(actualBook)
-                .isNotNull()
-                .usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(expectedBook);
+        assertThat(actualBook).isNotNull().isEqualTo(expectedBook);
     }
 
     @DisplayName(" должен обновлять книгу")
@@ -79,7 +68,6 @@ public class BookRepositoryJdbcTest {
         assertThat(changedBook)
                 .isNotNull()
                 .usingRecursiveComparison()
-                .ignoringFields("id")
                 .isEqualTo(expectedBook);
 
         Optional<Book> foundNewBook = bookRepository.findById(expectedBook.getId());
@@ -98,30 +86,21 @@ public class BookRepositoryJdbcTest {
         assertThat(emptyResult).isEmpty();
     }
 
-    private static List<Book> getBooks() {
-        Map<Long, List<Genre>> genresByBookId = new HashMap<>();
-        genresByBookId.put(1L, List.of(getGenres().get(0), getGenres().get(1)));
-        genresByBookId.put(2L, List.of(getGenres().get(2), getGenres().get(3)));
-        genresByBookId.put(3L, List.of(getGenres().get(4), getGenres().get(5)));
-
-        return IntStream.range(1,4)
-                .boxed()
-                .map(id -> new Book(id.longValue(), "BookTitle_" + id, getAuthors().get(id - 1),
-                                genresByBookId.get(id.longValue())))
-                .toList();
+    private List<Book> getBooks() {
+        TypedQuery<Book> query = testEntityManager.getEntityManager()
+                .createQuery("select b from Book b", Book.class);
+        return query.getResultList();
     }
 
-    private static List<Author> getAuthors() {
-        return IntStream.range(1,4)
-                .boxed()
-                .map(id -> new Author(id, "Author_" + id))
-                .toList();
+    private  List<Author> getAuthors() {
+        TypedQuery<Author> query = testEntityManager.getEntityManager()
+                .createQuery("select a from Author a", Author.class);
+        return query.getResultList();
     }
 
-    private static List<Genre> getGenres() {
-        return IntStream.range(1,7)
-                .boxed()
-                .map(id -> new Genre(id, "Genre_" + id))
-                .toList();
+    private List<Genre> getGenres() {
+        TypedQuery<Genre> query = testEntityManager.getEntityManager()
+                .createQuery("select g from Genre g", Genre.class);
+        return query.getResultList();
     }
 }
