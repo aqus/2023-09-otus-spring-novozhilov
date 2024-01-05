@@ -40,7 +40,7 @@ public class Book {
     @JoinColumn(name = "author_id")
     private Author author;
 
-    @ManyToMany(targetEntity = Genre.class, cascade = CascadeType.ALL)
+    @ManyToMany(targetEntity = Genre.class)
     @JoinTable(name = "books_genres",
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
