@@ -77,13 +77,4 @@ public class Comment {
     public int hashCode() {
         return Objects.hash(id, text, book);
     }
-
-    @Override
-    public String toString() {
-        return "Comment{" +
-                "id=" + id +
-                ", text='" + text + '\'' +
-                ", book=" + book +
-                '}';
-    }
 }
