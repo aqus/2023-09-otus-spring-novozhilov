@@ -58,10 +58,9 @@ public class BookRepositoryJpaTest {
         Book expectedBook = new Book(1, "NewBookTitle_1", getAuthors().get(2),
                 List.of(getGenres().get(2), getGenres().get(3)));
 
-        Optional<Book> oldBook = bookRepository.findById(expectedBook.getId());
+        Book oldBook = testEntityManager.getEntityManager().find(Book.class, expectedBook.getId());
         assertThat(oldBook)
-                .isPresent()
-                .get()
+                .isNotNull()
                 .isNotEqualTo(expectedBook);
 
         Book changedBook = bookRepository.save(expectedBook);
@@ -70,10 +69,9 @@ public class BookRepositoryJpaTest {
                 .usingRecursiveComparison()
                 .isEqualTo(expectedBook);
 
-        Optional<Book> foundNewBook = bookRepository.findById(expectedBook.getId());
+        Book foundNewBook = testEntityManager.getEntityManager().find(Book.class, expectedBook.getId());
         assertThat(foundNewBook)
-                .isPresent()
-                .get()
+                .isNotNull()
                 .isEqualTo(changedBook);
     }
 
