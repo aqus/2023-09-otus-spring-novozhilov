@@ -1,6 +1,5 @@
 package ru.otus.catalog.models;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,6 +13,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.List;
 import java.util.Objects;
@@ -23,8 +24,7 @@ import java.util.Objects;
 @NamedEntityGraph(
         name = "book-entity-graph",
         attributeNodes = {
-                @NamedAttributeNode("author"),
-                @NamedAttributeNode("genres")
+                @NamedAttributeNode("author")
         }
 )
 public class Book {
@@ -40,6 +40,7 @@ public class Book {
     @JoinColumn(name = "author_id")
     private Author author;
 
+    @Fetch(FetchMode.SUBSELECT)
     @ManyToMany(targetEntity = Genre.class)
     @JoinTable(name = "books_genres",
             joinColumns = @JoinColumn(name = "book_id"),
