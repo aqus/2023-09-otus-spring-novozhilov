@@ -1,5 +1,6 @@
 package ru.otus.catalog.repositories;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,10 @@ public class BookRepositoryJpa implements BookRepository {
 
     @Override
     public Optional<Book> findById(long id) {
-        return Optional.ofNullable(em.find(Book.class, id));
+        EntityGraph<?> entityGraph = em.getEntityGraph("book-entity-graph");
+        HashMap<String, Object> properties = new HashMap<>();
+        properties.put(FETCH.getKey(), entityGraph);
+        return Optional.ofNullable(em.find(Book.class, id, properties));
     }
 
     @Override
