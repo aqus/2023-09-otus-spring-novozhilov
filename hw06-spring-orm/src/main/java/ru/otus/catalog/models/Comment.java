@@ -10,8 +10,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-import java.util.Objects;
-
 @Entity
 @Table(name = "comments")
 public class Comment {
@@ -58,23 +56,5 @@ public class Comment {
 
     public void setBook(Book book) {
         this.book = book;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Comment comment = (Comment) o;
-        return Objects.equals(id, comment.id) && Objects.equals(text, comment.text)
-                && Objects.equals(book, comment.book);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, text, book);
     }
 }
