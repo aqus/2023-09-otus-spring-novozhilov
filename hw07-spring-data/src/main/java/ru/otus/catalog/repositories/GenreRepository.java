@@ -1,12 +1,8 @@
 package ru.otus.catalog.repositories;
 
-import java.util.List;
-
+import org.springframework.data.jpa.repository.JpaRepository;
 import ru.otus.catalog.models.Genre;
 
-public interface GenreRepository {
+public interface GenreRepository extends JpaRepository<Genre, Long> {
 
-    List<Genre> findAll();
-
-    List<Genre> findAllByIds(List<Long> ids);
 }
