@@ -30,7 +30,7 @@ public class BookRepositoryJpaTest {
     @DisplayName(" должен возвращать книгу по id")
     @Test
     void shouldReturnCorrectBookById() {
-        Book expectedBook = getBooks().get(0);
+        Book expectedBook = testEntityManager.find(Book.class, 1);;
         Optional<Book> actual = bookRepository.findById(expectedBook.getId());
         assertThat(actual).isPresent().get().isEqualTo(expectedBook);
     }
@@ -78,7 +78,7 @@ public class BookRepositoryJpaTest {
     @DisplayName(" должен удалять книгу по id")
     @Test
     void shouldDeleteBookById() {
-        Book deletionBook = getBooks().get(0);
+        Book deletionBook = testEntityManager.find(Book.class, 1);
         bookRepository.deleteById(deletionBook.getId());
         Optional<Book> emptyResult = bookRepository.findById(deletionBook.getId());
         assertThat(emptyResult).isEmpty();
