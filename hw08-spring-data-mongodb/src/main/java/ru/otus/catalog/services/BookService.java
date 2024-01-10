@@ -6,13 +6,13 @@ import ru.otus.catalog.dto.BookDto;
 
 public interface BookService {
 
-    BookDto findById(long id);
+    BookDto findById(String id);
 
     List<BookDto> findAll();
 
-    BookDto insert(String title, long authorId, List<Long> genresIds);
+    BookDto insert(String title, String authorId, List<String> genresIds);
 
-    BookDto update(long id, String title, long authorId, List<Long> genresIds);
+    BookDto update(String id, String title, String authorId, List<String> genresIds);
 
-    void deleteById(long id);
+    void deleteById(String id);
 }

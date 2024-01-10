@@ -26,16 +26,16 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDto findById(long id) {
+    public CommentDto findById(String id) {
         return CommentMapper.toCommentDto(commentRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Comment with id %d not found".formatted(id))));
+                .orElseThrow(() -> new EntityNotFoundException("Comment with id %s not found".formatted(id))));
     }
 
     @Override
-    public List<CommentDto> findAllByBookId(long id) {
+    public List<CommentDto> findAllByBookId(String id) {
         Book book =
                 bookRepository.findById(id)
-                        .orElseThrow(() -> new EntityNotFoundException("Book with id %d not found"
+                        .orElseThrow(() -> new EntityNotFoundException("Book with id %s not found"
                                 .formatted(id)
                         ));
         return commentRepository.findAllByBookId(book.getId())
@@ -49,7 +49,7 @@ public class CommentServiceImpl implements CommentService {
     public CommentDto create(CommentDto commentDto) {
         Book book =
                 bookRepository.findById(commentDto.getBookId())
-                        .orElseThrow(() -> new EntityNotFoundException("Book with id %d not found"
+                        .orElseThrow(() -> new EntityNotFoundException("Book with id %s not found"
                                 .formatted(commentDto.getBookId())
                         ));
         Comment newComment = new Comment(commentDto.getId(), commentDto.getText(), book);
@@ -62,7 +62,7 @@ public class CommentServiceImpl implements CommentService {
     public CommentDto update(CommentDto commentDto) {
         Comment updatedComment =
                 commentRepository.findById(commentDto.getId())
-                        .orElseThrow(() -> new EntityNotFoundException("Comment with id %d not found"
+                        .orElseThrow(() -> new EntityNotFoundException("Comment with id %s not found"
                                 .formatted(commentDto.getId())));
 
         if (!Objects.equals(updatedComment.getBook().getId(), commentDto.getBookId())) {
@@ -74,7 +74,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Transactional
     @Override
-    public void deleteById(long id) {
+    public void deleteById(String id) {
         commentRepository.deleteById(id);
     }
 }

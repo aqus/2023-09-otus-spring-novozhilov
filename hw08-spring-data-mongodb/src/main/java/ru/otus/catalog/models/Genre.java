@@ -1,36 +1,33 @@
 package ru.otus.catalog.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name = "genres")
+@Document(collection = "genres")
 public class Genre {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private String id;
 
-    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    public Genre(long id, String name) {
+    public Genre(String id, String name) {
         this.id = id;
+        this.name = name;
+    }
+
+    public Genre(String name) {
         this.name = name;
     }
 
     public Genre() {
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

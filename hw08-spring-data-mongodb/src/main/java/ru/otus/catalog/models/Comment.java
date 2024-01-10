@@ -1,32 +1,27 @@
 package ru.otus.catalog.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name = "comments")
+@Document(collection = "comments")
 public class Comment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @Column(name = "text", nullable = false)
     private String text;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_id")
+    @DBRef
     private Book book;
 
-    public Comment(Long id, String text, Book book) {
+    public Comment(String id, String text, Book book) {
         this.id = id;
+        this.text = text;
+        this.book = book;
+    }
+
+    public Comment(String text, Book book) {
         this.text = text;
         this.book = book;
     }
@@ -34,11 +29,11 @@ public class Comment {
     public Comment() {
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

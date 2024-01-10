@@ -1,18 +1,16 @@
 package ru.otus.catalog.dto;
 
-import ru.otus.catalog.models.Comment;
-
 import java.util.Objects;
 
 public class CommentDto {
 
-    private Long id;
+    private String id;
 
     private String text;
 
-    private Long bookId;
+    private String bookId;
 
-    public CommentDto(Long id, String text, Long bookId) {
+    public CommentDto(String id, String text, String bookId) {
         this.id = id;
         this.text = text;
         this.bookId = bookId;
@@ -21,15 +19,11 @@ public class CommentDto {
     public CommentDto() {
     }
 
-    public Comment toModelObject() {
-        return new Comment(id, text, null);
-    }
-
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -41,11 +35,11 @@ public class CommentDto {
         this.text = text;
     }
 
-    public Long getBookId() {
+    public String getBookId() {
         return bookId;
     }
 
-    public void setBookId(Long bookId) {
+    public void setBookId(String bookId) {
         this.bookId = bookId;
     }
 
@@ -58,7 +52,7 @@ public class CommentDto {
             return false;
         }
         CommentDto that = (CommentDto) o;
-        return Objects.equals(id, that.id) && Objects.equals(bookId, that.bookId) && Objects.equals(text, that.text);
+        return Objects.equals(id, that.id) && Objects.equals(text, that.text) && Objects.equals(bookId, that.bookId);
     }
 
     @Override
@@ -69,9 +63,9 @@ public class CommentDto {
     @Override
     public String toString() {
         return "CommentDto{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", text='" + text + '\'' +
-                ", bookId=" + bookId +
+                ", bookId='" + bookId + '\'' +
                 '}';
     }
 }

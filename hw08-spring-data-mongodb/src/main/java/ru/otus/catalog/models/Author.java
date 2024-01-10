@@ -1,32 +1,31 @@
 package ru.otus.catalog.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-@Entity
-@Table(name = "authors")
+@Document(collection = "authors")
 public class Author {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private String id;
 
-    @Column(name = "full_name", nullable = false)
+    @Field(name = "full_name")
     private String fullName;
 
-    public Author(long id, String fullName) {
+    public Author(String id, String fullName) {
         this.id = id;
+        this.fullName = fullName;
+    }
+
+    public Author(String fullName) {
         this.fullName = fullName;
     }
 
     public Author() {
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
@@ -34,7 +33,7 @@ public class Author {
         return fullName;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

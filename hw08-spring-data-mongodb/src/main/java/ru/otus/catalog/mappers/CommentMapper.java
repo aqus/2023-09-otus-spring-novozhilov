@@ -6,7 +6,7 @@ import ru.otus.catalog.models.Comment;
 public class CommentMapper {
 
     public static CommentDto toCommentDto(Comment comment) {
-        Long bookId = comment.getBook() != null ? comment.getBook().getId() : null;
+        String bookId = comment.getBook() != null ? comment.getBook().getId() : null;
         return new CommentDto(comment.getId(), comment.getText(), bookId);
     }
 }

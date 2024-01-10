@@ -1,16 +1,14 @@
 package ru.otus.catalog.dto;
 
-import ru.otus.catalog.models.Author;
-
 import java.util.Objects;
 
 public class AuthorDto {
 
-    private long id;
+    private String id;
 
     private String fullName;
 
-    public AuthorDto(long id, String fullName) {
+    public AuthorDto(String id, String fullName) {
         this.id = id;
         this.fullName = fullName;
     }
@@ -18,15 +16,11 @@ public class AuthorDto {
     public AuthorDto() {
     }
 
-    public Author toModelObject() {
-        return new Author(id, fullName);
-    }
-
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -47,7 +41,7 @@ public class AuthorDto {
             return false;
         }
         AuthorDto authorDto = (AuthorDto) o;
-        return id == authorDto.id && Objects.equals(fullName, authorDto.fullName);
+        return Objects.equals(id, authorDto.id) && Objects.equals(fullName, authorDto.fullName);
     }
 
     @Override
@@ -58,7 +52,7 @@ public class AuthorDto {
     @Override
     public String toString() {
         return "AuthorDto{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", fullName='" + fullName + '\'' +
                 '}';
     }

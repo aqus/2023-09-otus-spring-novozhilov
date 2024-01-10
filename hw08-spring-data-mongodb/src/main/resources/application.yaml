@@ -1,17 +1,11 @@
 spring:
-  datasource:
-    url: jdbc:h2:mem:maindb
-  sql:
-    init:
-      mode: always
-      data-locations: data.sql
-      schema-locations: schema.sql
-  jpa:
-    generate-ddl: false
-    hibernate:
-      ddl-auto: none
-    show-sql: true
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: books
 
-    properties:
-      hibernate:
-        format_sql: true
+mongock:
+  runner-type: "InitializingBean"
+  change-logs-scan-package:
+    - ru.otus.catalog.changelogs
