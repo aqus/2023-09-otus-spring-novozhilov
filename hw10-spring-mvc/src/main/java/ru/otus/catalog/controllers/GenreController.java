@@ -1,4 +1,4 @@
-package ru.otus.catalog.commands;
+package ru.otus.catalog.controllers;
 
 import java.util.stream.Collectors;
 
@@ -9,13 +9,13 @@ import ru.otus.catalog.converters.GenreConverter;
 import ru.otus.catalog.services.GenreService;
 
 @ShellComponent
-public class GenreCommands {
+public class GenreController {
 
     private final GenreService genreService;
 
     private final GenreConverter genreConverter;
 
-    public GenreCommands(GenreService genreService, GenreConverter genreConverter) {
+    public GenreController(GenreService genreService, GenreConverter genreConverter) {
         this.genreService = genreService;
         this.genreConverter = genreConverter;
     }

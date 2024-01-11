@@ -1,4 +1,4 @@
-package ru.otus.catalog.commands;
+package ru.otus.catalog.controllers;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,13 +11,13 @@ import ru.otus.catalog.dto.BookDto;
 import ru.otus.catalog.services.BookService;
 
 @ShellComponent
-public class BookCommands {
+public class BookController {
 
     private final BookService bookService;
 
     private final BookConverter bookConverter;
 
-    public BookCommands(BookService bookService, BookConverter bookConverter) {
+    public BookController(BookService bookService, BookConverter bookConverter) {
         this.bookService = bookService;
         this.bookConverter = bookConverter;
     }

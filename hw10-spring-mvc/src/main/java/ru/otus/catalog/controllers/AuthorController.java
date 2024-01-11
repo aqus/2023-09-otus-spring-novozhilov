@@ -1,4 +1,4 @@
-package ru.otus.catalog.commands;
+package ru.otus.catalog.controllers;
 
 import java.util.stream.Collectors;
 
@@ -9,13 +9,13 @@ import ru.otus.catalog.converters.AuthorConverter;
 import ru.otus.catalog.services.AuthorService;
 
 @ShellComponent
-public class AuthorCommands {
+public class AuthorController {
     
     private final AuthorService authorService;
     
     private final AuthorConverter authorConverter;
 
-    public AuthorCommands(AuthorService authorService, AuthorConverter authorConverter) {
+    public AuthorController(AuthorService authorService, AuthorConverter authorConverter) {
         this.authorService = authorService;
         this.authorConverter = authorConverter;
     }

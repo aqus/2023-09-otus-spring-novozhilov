@@ -1,4 +1,4 @@
-package ru.otus.catalog.commands;
+package ru.otus.catalog.controllers;
 
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -9,13 +9,13 @@ import ru.otus.catalog.services.CommentService;
 import java.util.stream.Collectors;
 
 @ShellComponent
-public class CommentCommands {
+public class CommentController {
 
     private final CommentService commentService;
 
     private final CommentConverter commentConverter;
 
-    public CommentCommands(CommentService commentService, CommentConverter commentConverter) {
+    public CommentController(CommentService commentService, CommentConverter commentConverter) {
         this.commentService = commentService;
         this.commentConverter = commentConverter;
     }
