@@ -2,13 +2,12 @@ package ru.otus.catalog.controllers;
 
 import java.util.stream.Collectors;
 
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.otus.catalog.converters.AuthorConverter;
 import ru.otus.catalog.services.AuthorService;
 
-@ShellComponent
+@RestController("/api/v1/authors")
 public class AuthorController {
     
     private final AuthorService authorService;
@@ -20,7 +19,7 @@ public class AuthorController {
         this.authorConverter = authorConverter;
     }
 
-    @ShellMethod(value = "Find all authors", key = "aa")
+    @GetMapping
     public String findAllAuthors() {
         return authorService.findAll().stream()
                 .map(authorConverter::authorToString)

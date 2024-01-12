@@ -2,13 +2,12 @@ package ru.otus.catalog.controllers;
 
 import java.util.stream.Collectors;
 
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.otus.catalog.converters.GenreConverter;
 import ru.otus.catalog.services.GenreService;
 
-@ShellComponent
+@RestController("/api/v1/genres")
 public class GenreController {
 
     private final GenreService genreService;
@@ -20,7 +19,7 @@ public class GenreController {
         this.genreConverter = genreConverter;
     }
 
-    @ShellMethod(value = "Find all genres", key = "ag")
+    @GetMapping
     public String findAllGenres() {
         return genreService.findAll().stream()
                 .map(genreConverter::genreToString)
