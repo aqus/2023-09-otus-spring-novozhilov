@@ -13,7 +13,8 @@ public class UpdateBookDto {
     @NotBlank(message = "Mustn't be empty")
     private String title;
 
-    private @NotNull Long authorId;
+    @NotNull
+    private Long authorId;
 
     @NotNull
     private List<Long> genresIds;
