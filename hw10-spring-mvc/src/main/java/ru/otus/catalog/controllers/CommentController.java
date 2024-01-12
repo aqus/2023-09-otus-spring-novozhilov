@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.catalog.converters.CommentConverter;
 import ru.otus.catalog.dto.CommentDto;
@@ -16,7 +17,8 @@ import ru.otus.catalog.services.CommentService;
 
 import java.util.stream.Collectors;
 
-@RestController("/api/v1")
+@RestController
+@RequestMapping("api/v1/")
 public class CommentController {
 
     private final CommentService commentService;

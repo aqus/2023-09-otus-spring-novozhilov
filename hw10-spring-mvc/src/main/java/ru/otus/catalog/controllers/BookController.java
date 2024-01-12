@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.catalog.converters.BookConverter;
 import ru.otus.catalog.dto.BookDto;
@@ -17,7 +18,8 @@ import ru.otus.catalog.dto.CreateBookDto;
 import ru.otus.catalog.dto.UpdateBookDto;
 import ru.otus.catalog.services.BookService;
 
-@RestController("/api/v1")
+@RestController
+@RequestMapping("api/v1/")
 public class BookController {
 
     private final BookService bookService;
