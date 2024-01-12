@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatButtonModule} from '@angular/material/button';
-import {HttpClientModule} from "@angular/common/http";
 
 @Component({
     selector: 'app-root',
