@@ -31,7 +31,7 @@ public class CommentController {
         return commentService.findAllByBookId(bookId);
     }
 
-    @GetMapping("/comments/{id}")
+    @GetMapping("/comment/{id}")
     public CommentDto findCommentById(@PathVariable long id) {
         return commentService.findById(id);
     }

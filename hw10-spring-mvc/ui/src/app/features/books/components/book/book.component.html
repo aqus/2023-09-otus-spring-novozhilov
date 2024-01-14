@@ -1,0 +1,54 @@
+@if (book) {
+    <h1>
+        {{ book.title }}
+        <button mat-icon-button
+                color="primary"
+                aria-label="Update book"
+                (click)="openUpdateDialog(book)"
+        >
+            <mat-icon>edit</mat-icon>
+        </button>
+    </h1>
+    <div>
+        Автор: <strong>{{ book.authorDto.fullName }}</strong>
+    </div>
+    <div>
+        Жанры:
+        @for (genre of book.genreDtos; track genre.id) {
+            {{ genre.name }}
+        } @empty {
+            There are no genres for this book.
+        }
+    </div>
+    <div class="comments">
+        <div class="comments-heading">
+            <h3 class="comments-header">
+                Comments:
+            </h3>
+            <button mat-icon-button
+                    color="primary"
+                    aria-label="add comment"
+                    (click)="addComment()"
+            >
+                <mat-icon>add</mat-icon>
+            </button>
+        </div>
+
+        @for (comment of comments; track comment.id) {
+            <div class="comment">
+                {{ comment.text }}
+                <button mat-icon-button
+                        color="warn"
+                        aria-label="delete comment"
+                        (click)="deleteComment(comment)"
+                >
+                    <mat-icon>delete</mat-icon>
+                </button>
+            </div>
+        } @empty {
+            There are no comments for this book.
+        }
+    </div>
+} @else {
+    Book not found.
+}
