@@ -10,10 +10,9 @@ import ru.otus.catalog.dto.BookDto;
 import ru.otus.catalog.exceptions.EntityNotFoundException;
 import ru.otus.catalog.mappers.BookMapper;
 import ru.otus.catalog.models.Book;
-import ru.otus.catalog.models.Comment;
 import ru.otus.catalog.repositories.AuthorRepository;
 import ru.otus.catalog.repositories.BookRepository;
-import ru.otus.catalog.repositories.CommentRepository;
+import ru.otus.catalog.repositories.CommentCustomRepository;
 import ru.otus.catalog.repositories.GenreRepository;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -27,16 +26,16 @@ public class BookServiceImpl implements BookService {
     
     private final BookRepository bookRepository;
 
-    private final CommentRepository commentRepository;
+    private final CommentCustomRepository commentCustomRepository;
 
     public BookServiceImpl(AuthorRepository authorRepository,
                            GenreRepository genreRepository,
                            BookRepository bookRepository,
-                           CommentRepository commentRepository) {
+                           CommentCustomRepository commentCustomRepository) {
         this.authorRepository = authorRepository;
         this.genreRepository = genreRepository;
         this.bookRepository = bookRepository;
-        this.commentRepository = commentRepository;
+        this.commentCustomRepository = commentCustomRepository;
     }
 
     @Transactional(readOnly = true)
@@ -75,8 +74,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public void deleteById(String id) {
         bookRepository.deleteById(id);
-        List<Comment> commentsBookId = commentRepository.findAllByBookId(id);
-        commentRepository.deleteAll(commentsBookId);
+        commentCustomRepository.deleteCommentsByBook(id);
     }
 
     private BookDto save(String id, String title, String authorId, List<String> genresIds) {
