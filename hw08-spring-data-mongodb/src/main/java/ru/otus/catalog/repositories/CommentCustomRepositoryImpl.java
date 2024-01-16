@@ -18,6 +18,6 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
     @Override
     public void deleteCommentsByBook(String bookId) {
         Query query = new Query(Criteria.where("book").is(bookId));
-        mongoOperations.findAllAndRemove(query, Comment.class, "comments");
+        mongoOperations.remove(query, Comment.class, "comments");
     }
 }
