@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {BookDto} from "../types/BookDto";
+import {CreateBookRequest} from "../types/CreateBookRequest";
 
 @Injectable({
     providedIn: 'root'
@@ -18,7 +19,7 @@ export class BooksService {
         return this.httpClient.get(`/api/v1/books/${id}`)
     }
 
-    addBook(book: BookDto) {
+    addBook(book: CreateBookRequest) {
         return this.httpClient.post("/api/v1/books", book);
     }
 

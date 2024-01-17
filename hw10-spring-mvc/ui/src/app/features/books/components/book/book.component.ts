@@ -9,13 +9,17 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {UpdateBookDialogComponent} from "../update-book-dialog/update-book-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
+import {FormBuilder, ReactiveFormsModule, Validators} from "@angular/forms";
+import {MatInputModule} from "@angular/material/input";
 
 @Component({
     selector: 'app-book',
     standalone: true,
     imports: [
         MatButtonModule,
-        MatIconModule
+        MatIconModule,
+        ReactiveFormsModule,
+        MatInputModule
     ],
     templateUrl: './book.component.html',
     styleUrl: './book.component.scss'
@@ -30,10 +34,15 @@ export class BookComponent implements OnInit, OnDestroy {
 
     comments: CommentDto[] = [];
 
+    addCommentForm = this.fb.group({
+        text: ['', Validators.minLength(4)]
+    });
+
     constructor(private booksService: BooksService,
                 private commentsService: CommentsService,
                 private dialog: MatDialog,
-                private route: ActivatedRoute) {
+                private route: ActivatedRoute,
+                private fb: FormBuilder) {
     }
 
     ngOnInit(): void {
@@ -85,6 +94,21 @@ export class BookComponent implements OnInit, OnDestroy {
     deleteComment(comment: CommentDto) {
         this.commentsService.deleteComment(comment.id).subscribe();
         this.fetchComments(this.book!.id);
+    }
+
+    commentSubmit() {
+        if (this.addCommentForm.invalid) {
+            return;
+        }
+
+        const text = this.addCommentForm.get('text')!.value!;
+        this.commentsService.addComment({
+            bookId: this.book!.id,
+            text
+        })
+            .subscribe(() => {
+                this.fetchComments(this.book!.id);
+            });
     }
 
     ngOnDestroy(): void {

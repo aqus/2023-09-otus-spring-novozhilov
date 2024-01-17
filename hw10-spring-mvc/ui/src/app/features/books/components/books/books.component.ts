@@ -8,6 +8,8 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatDialog} from "@angular/material/dialog";
 import {UpdateBookDialogComponent} from "../update-book-dialog/update-book-dialog.component";
 import {RouterLink} from "@angular/router";
+import {AddBookDialogComponent} from "../add-book-dialog/add-book-dialog.component";
+import {CreateBookRequest} from "../../types/CreateBookRequest";
 
 @Component({
     selector: 'app-books',
@@ -58,6 +60,23 @@ export class BooksComponent implements OnInit {
 
                 const updatedBook = result as BookDto;
                 this.booksService.updateBook(updatedBook)
+                    .subscribe(result => {
+                        this.fetchBooks();
+                    });
+            });
+    }
+
+    openAddDialog() {
+        const dialogRef = this.dialog.open(AddBookDialogComponent, {
+            data: null,
+        });
+
+        dialogRef.afterClosed()
+            .subscribe(result => {
+                if (!result) {
+                    return;
+                }
+                this.booksService.addBook(result as CreateBookRequest)
                     .subscribe(result => {
                         this.fetchBooks();
                     });

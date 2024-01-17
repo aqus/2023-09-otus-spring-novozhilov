@@ -22,32 +22,42 @@
     </div>
     <div class="comments">
         <div class="comments-heading">
-            <h3 class="comments-header">
+            <h3>
+                Add comment:
+            </h3>
+            <div>
+                <form [formGroup]="addCommentForm"
+                      (ngSubmit)="commentSubmit()"
+                >
+                    <mat-form-field>
+                        <mat-label>Comment</mat-label>
+                        <textarea matInput formControlName="text"></textarea>
+                    </mat-form-field>
+                    <div>
+                        <button mat-flat-button color="primary" type="submit">Отравить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="comments-list">
+            <h3>
                 Comments:
             </h3>
-            <button mat-icon-button
-                    color="primary"
-                    aria-label="add comment"
-                    (click)="addComment()"
-            >
-                <mat-icon>add</mat-icon>
-            </button>
+            @for (comment of comments; track comment.id) {
+                <div class="comment">
+                    {{ comment.text }}
+                    <button mat-icon-button
+                            color="warn"
+                            aria-label="delete comment"
+                            (click)="deleteComment(comment)"
+                    >
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
+            } @empty {
+                There are no comments for this book.
+            }
         </div>
-
-        @for (comment of comments; track comment.id) {
-            <div class="comment">
-                {{ comment.text }}
-                <button mat-icon-button
-                        color="warn"
-                        aria-label="delete comment"
-                        (click)="deleteComment(comment)"
-                >
-                    <mat-icon>delete</mat-icon>
-                </button>
-            </div>
-        } @empty {
-            There are no comments for this book.
-        }
     </div>
 } @else {
     Book not found.
