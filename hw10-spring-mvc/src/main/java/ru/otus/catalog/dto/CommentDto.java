@@ -1,7 +1,5 @@
 package ru.otus.catalog.dto;
 
-import ru.otus.catalog.models.Comment;
-
 import java.util.Objects;
 
 public class CommentDto {
@@ -19,10 +17,6 @@ public class CommentDto {
     }
 
     public CommentDto() {
-    }
-
-    public Comment toModelObject() {
-        return new Comment(id, text, null);
     }
 
     public Long getId() {

@@ -46,7 +46,7 @@ public class CommentController {
     }
 
     @PutMapping("/comments")
-    public CommentDto updateBook(@RequestBody @Valid UpdateCommentDto updateCommentDto) {
+    public CommentDto updateComment(@RequestBody @Valid UpdateCommentDto updateCommentDto) {
         return commentService.update(
                 new CommentDto(
                         updateCommentDto.getId(),
@@ -55,7 +55,7 @@ public class CommentController {
     }
 
     @DeleteMapping("/comments/{id}")
-    public void deleteBook(@PathVariable long id) {
+    public void deleteComment(@PathVariable long id) {
         commentService.deleteById(id);
     }
 }
