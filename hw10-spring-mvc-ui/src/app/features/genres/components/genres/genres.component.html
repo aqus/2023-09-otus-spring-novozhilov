@@ -1,0 +1,11 @@
+@for (genre of genres; track genre.id) {
+    <div class="genre-description">
+        <h3>
+            {{ genre.name }}
+        </h3>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque eius harum ipsam iusto nobis odio officia,
+        placeat quibusdam repudiandae unde! Assumenda cum dolore impedit, nam nobis praesentium rem unde voluptates?
+    </div>
+} @empty {
+    Empty list of genres
+}
