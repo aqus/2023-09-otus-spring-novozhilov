@@ -1,6 +1,5 @@
 package ru.otus.catalog.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,31 +7,27 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Flux;
 import ru.otus.catalog.dto.GenreDto;
-import ru.otus.catalog.services.GenreService;
+import ru.otus.catalog.repositories.GenreRepository;
 
 import java.util.List;
 
 @DisplayName("Контроллер жанров")
-@WebMvcTest(GenreController.class)
+@SpringBootTest(classes = {GenreController.class})
 class GenreControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
-    
+    private GenreController genreController;
+
     @MockBean
-    private GenreService genreService;
-    
-    @Autowired
-    private ObjectMapper objectMapper;
-    
+    private GenreRepository genreRepository;
+
     private List<GenreDto> genres;
     
     @BeforeEach
@@ -50,13 +45,18 @@ class GenreControllerTest {
     @DisplayName("должен возвращать список жанров")
     @Test
     void shouldReturnAllTheGenres() throws Exception {
-        when(genreService.findAll()).thenReturn(genres);
-        
-        mockMvc.perform(get("/api/v1/genres"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(objectMapper.writeValueAsString(genres)));
-        
-        verify(genreService, times(1)).findAll();
+        when(genreRepository.findAll()).thenReturn(Flux.fromStream(genres.stream().map(GenreDto::toModelObject)));
+
+        WebTestClient testClient = WebTestClient.bindToController(genreController).build();
+        testClient.get()
+                .uri("/api/v1/genres")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBodyList(GenreDto.class)
+                .isEqualTo(genres);
+
+        verify(genreRepository, times(1)).findAll();
     }
 }
