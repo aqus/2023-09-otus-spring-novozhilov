@@ -1,6 +1,5 @@
 package ru.otus.catalog.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,30 +7,27 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import org.springframework.test.web.servlet.MockMvc;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import org.springframework.test.web.reactive.server.WebTestClient;
+
+import reactor.core.publisher.Flux;
 import ru.otus.catalog.dto.AuthorDto;
-import ru.otus.catalog.services.AuthorService;
+import ru.otus.catalog.repositories.AuthorRepository;
 
 import java.util.List;
 
 @DisplayName("Контроллер авторов")
-@WebMvcTest(AuthorController.class)
+@SpringBootTest(classes = {AuthorController.class})
 class AuthorControllerTest {
-    
-    @Autowired
-    private MockMvc mockMvc;
-    
+
     @MockBean
-    private AuthorService authorService;
+    private AuthorRepository authorRepository;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private AuthorController authorController;
     
     private List<AuthorDto> authorsDto;
 
@@ -47,13 +43,17 @@ class AuthorControllerTest {
     @DisplayName("должен возвращать список всех авторов")
     @Test
     void shouldFindAllAuthors() throws Exception {
-        when(authorService.findAll()).thenReturn(authorsDto);
+        when(authorRepository.findAll()).thenReturn(Flux.fromIterable(authorsDto).map(AuthorDto::toModelObject));
 
-        mockMvc.perform(get("/api/v1/authors"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(objectMapper.writeValueAsString(authorsDto)));
-
-        verify(authorService, times(1)).findAll();
+        WebTestClient testClient = WebTestClient.bindToController(authorController).build();
+        testClient.get()
+                .uri("/api/v1/authors")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBodyList(AuthorDto.class)
+                .isEqualTo(authorsDto);
+        verify(authorRepository, times(1)).findAll();
     }
 }
