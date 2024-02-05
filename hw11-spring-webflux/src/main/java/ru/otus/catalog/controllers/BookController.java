@@ -1,9 +1,9 @@
 package ru.otus.catalog.controllers;
 
-import java.util.List;
-
 import jakarta.validation.Valid;
 
+import jakarta.validation.constraints.NotNull;
+import org.apache.commons.lang3.Validate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,44 +11,82 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.otus.catalog.dto.BookDto;
 import ru.otus.catalog.dto.CreateBookDto;
 import ru.otus.catalog.dto.UpdateBookDto;
-import ru.otus.catalog.services.BookService;
+import ru.otus.catalog.exceptions.EntityNotFoundException;
+import ru.otus.catalog.mappers.BookMapper;
+import ru.otus.catalog.models.Author;
+import ru.otus.catalog.models.Book;
+import ru.otus.catalog.models.Genre;
+import ru.otus.catalog.repositories.AuthorRepository;
+import ru.otus.catalog.repositories.BookRepository;
+import ru.otus.catalog.repositories.GenreRepository;
+
+import java.util.List;
 
 @RestController
 public class BookController {
 
-    private final BookService bookService;
+    private final BookRepository bookRepository;
 
-    public BookController(BookService bookService) {
-        this.bookService = bookService;
+    private final AuthorRepository authorRepository;
+
+    private final GenreRepository genreRepository;
+
+    public BookController(BookRepository bookRepository,
+                          AuthorRepository authorRepository,
+                          GenreRepository genreRepository) {
+        this.bookRepository = bookRepository;
+        this.authorRepository = authorRepository;
+        this.genreRepository = genreRepository;
     }
 
     @GetMapping("api/v1/books")
-    public List<BookDto> findAllBooks() {
-        return bookService.findAll();
+    public Flux<BookDto> findAllBooks() {
+        return bookRepository.findAll().map(BookMapper::toBookDto);
     }
 
     @GetMapping("api/v1/books/{id}")
-    public BookDto findBookById(@PathVariable long id) {
-        return bookService.findById(id);
+    public Mono<BookDto> findBookById(@PathVariable long id) {
+        return bookRepository.findById(id).map(BookMapper::toBookDto);
     }
 
     @PostMapping("api/v1/books")
-    public BookDto insertBook(@RequestBody @Valid CreateBookDto createBookDto) {
-        return bookService.insert(createBookDto.getTitle(), createBookDto.getAuthorId(),
-                createBookDto.getGenresIds());
+    public Mono<BookDto> insertBook(@RequestBody @Valid CreateBookDto createBookDto) {
+        return saveBook(0L, createBookDto.getTitle(), createBookDto.getAuthorId(), createBookDto.getGenresIds());
     }
 
     @PutMapping("api/v1/books")
-    public BookDto updateBook(@RequestBody @Valid UpdateBookDto updateBookDto) {
-        return bookService.update(updateBookDto.getId(), updateBookDto.getTitle(),
-                updateBookDto.getAuthorId(), updateBookDto.getGenresIds());
+    public Mono<BookDto> updateBook(@RequestBody @Valid UpdateBookDto updateBookDto) {
+        return bookRepository.findById(updateBookDto.getId())
+                .switchIfEmpty(Mono.error(new EntityNotFoundException("Book with id %d is not found"
+                        .formatted(updateBookDto.getId()))))
+                .map(book -> saveBook(book.getId(), updateBookDto.getTitle(),
+                        updateBookDto.getAuthorId(), updateBookDto.getGenresIds()).block());
     }
 
     @DeleteMapping("api/v1/books/{id}")
     public void deleteBook(@PathVariable long id) {
-        bookService.deleteById(id);
+        bookRepository.deleteById(id);
+    }
+
+    private Mono<BookDto> saveBook(@NotNull Long id,
+                                   String title,
+                                   Long authorId,
+                                   List<Long> genreIds) {
+        Validate.notNull(id);
+
+        Mono<Author> authorMono = authorRepository.findById(authorId)
+                .switchIfEmpty(Mono.error(new EntityNotFoundException("Book with id %d is not found"
+                        .formatted(authorId))));
+        Flux<Genre> genres = genreRepository.findAllById(genreIds)
+                .switchIfEmpty(Mono.error(new EntityNotFoundException("Genres with ids %s not found"
+                        .formatted(genreIds))));
+
+        Book book = new Book(id, title, authorMono.block(), genres.collectList().block());
+        return bookRepository.save(book).map(BookMapper::toBookDto);
     }
 }
