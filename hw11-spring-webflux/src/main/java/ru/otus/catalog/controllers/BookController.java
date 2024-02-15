@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
 import ru.otus.catalog.dto.BookDto;
 import ru.otus.catalog.dto.CreateBookDto;
 import ru.otus.catalog.dto.UpdateBookDto;
@@ -64,8 +65,9 @@ public class BookController {
         return bookRepository.findById(updateBookDto.getId())
                 .switchIfEmpty(Mono.error(new EntityNotFoundException("Book with id %d is not found"
                         .formatted(updateBookDto.getId()))))
-                .map(book -> saveBook(book.getId(), updateBookDto.getTitle(),
-                        updateBookDto.getAuthorId(), updateBookDto.getGenresIds()).block());
+                .zipWith(saveBook(updateBookDto.getId(), updateBookDto.getTitle(),
+                        updateBookDto.getAuthorId(), updateBookDto.getGenresIds()))
+                .map(Tuple2::getT2);
     }
 
     @DeleteMapping("api/v1/books/{id}")
@@ -86,7 +88,11 @@ public class BookController {
                 .switchIfEmpty(Mono.error(new EntityNotFoundException("Genres with ids %s not found"
                         .formatted(genreIds))));
 
-        Book book = new Book(id, title, authorMono.block(), genres.collectList().block());
-        return bookRepository.save(book).map(BookMapper::toBookDto);
+        return genres.collectList()
+                .zipWith(authorMono)
+                .flatMap(relations -> {
+                    Book book = new Book(id, title, relations.getT2(), relations.getT1());
+                    return bookRepository.save(book).map(BookMapper::toBookDto);
+                });
     }
 }

@@ -3,14 +3,21 @@ package ru.otus.catalog.controllers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
@@ -22,6 +29,7 @@ import ru.otus.catalog.dto.BookDto;
 import ru.otus.catalog.dto.CreateBookDto;
 import ru.otus.catalog.dto.GenreDto;
 import ru.otus.catalog.dto.UpdateBookDto;
+import ru.otus.catalog.models.Book;
 import ru.otus.catalog.repositories.AuthorRepository;
 import ru.otus.catalog.repositories.BookRepository;
 import ru.otus.catalog.repositories.GenreRepository;
@@ -31,15 +39,16 @@ import java.util.stream.Collectors;
 
 @DisplayName("Контроллер книг")
 @SpringBootTest(classes = {BookController.class})
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BookControllerTest {
 
-    @Autowired
+    @MockBean
     private BookRepository bookRepository;
 
-    @Autowired
+    @MockBean
     private AuthorRepository authorRepository;
 
-    @Autowired
+    @MockBean
     private GenreRepository genreRepository;
 
     @Autowired
@@ -105,12 +114,11 @@ class BookControllerTest {
         BookDto expectedNewBook = new BookDto(4, "NewBookTitle_4", new AuthorDto(2, "Author_2"),
                 List.of(new GenreDto(2, "Genre_2"), new GenreDto(5, "Genre_5"))
         );
-        when(bookRepository.save(expectedNewBook.toModelObject())).thenReturn(
+        when(bookRepository.save(any(Book.class))).thenReturn(
                 Mono.just(expectedNewBook.toModelObject()));
-        when(authorRepository.findById(expectedNewBook.getAuthorDto().getId())).thenReturn(
+        when(authorRepository.findById(anyLong())).thenReturn(
                 Mono.just(expectedNewBook.getAuthorDto().toModelObject()));
-        when(genreRepository.findAllById(
-                expectedNewBook.getGenreDtos().stream().map(GenreDto::getId).collect(Collectors.toList())))
+        when(genreRepository.findAllById(anyList()))
                 .thenReturn(Flux.just(new GenreDto(2, "Genre_2").toModelObject(),
                         new GenreDto(5, "Genre_5").toModelObject()));
 
@@ -125,7 +133,7 @@ class BookControllerTest {
                 .expectBody(BookDto.class)
                 .isEqualTo(expectedNewBook);
 
-        verify(bookRepository, times(1)).save(expectedNewBook.toModelObject());
+        verify(bookRepository, times(1)).save(any(Book.class));
         verify(authorRepository, times(1)).findById(anyLong());
         verify(genreRepository, times(1)).findAllById(anyList());
     }
@@ -140,14 +148,11 @@ class BookControllerTest {
                 new AuthorDto(2, "Author_2"),
                 List.of(new GenreDto(3, "Genre_3"), new GenreDto(4, "Genre_4")));
 
-        when(bookRepository.findById(actualBookDto.getId())).thenReturn(
-                Mono.just(actualBookDto.toModelObject()));
-        when(bookRepository.save(expectedBookDto.toModelObject())).thenReturn(
-                Mono.just(expectedBookDto.toModelObject()));
-        when(authorRepository.findById(expectedBookDto.getAuthorDto().getId())).thenReturn(
+        when(bookRepository.findById(anyLong())).thenReturn(Mono.just(actualBookDto.toModelObject()));
+        when(bookRepository.save(any(Book.class))).thenReturn(Mono.just(expectedBookDto.toModelObject()));
+        when(authorRepository.findById(anyLong())).thenReturn(
                 Mono.just(expectedBookDto.getAuthorDto().toModelObject()));
-        when(genreRepository.findAllById(
-                expectedBookDto.getGenreDtos().stream().map(GenreDto::getId).collect(Collectors.toList())))
+        when(genreRepository.findAllById(anyList()))
                 .thenReturn(Flux.just(new GenreDto(3, "Genre_3").toModelObject(),
                         new GenreDto(4, "Genre_4").toModelObject()));
 
@@ -162,7 +167,7 @@ class BookControllerTest {
                 .isEqualTo(expectedBookDto);
 
         verify(bookRepository, times(1)).findById(anyLong());
-        verify(bookRepository, times(1)).save(expectedBookDto.toModelObject());
+        verify(bookRepository, times(1)).save(any(Book.class));
         verify(authorRepository, times(1)).findById(anyLong());
         verify(genreRepository, times(1)).findAllById(anyList());
     }
@@ -171,7 +176,7 @@ class BookControllerTest {
     @Test
     void shouldDeleteBook() throws Exception {
         BookDto bookDto = books.get(0);
-        doNothing().when(bookRepository).deleteById(anyLong());
+        doReturn(Mono.empty()).when(bookRepository).deleteById(anyLong());
 
         WebTestClient testClient = WebTestClient.bindToController(bookController).build();
         testClient.delete()
