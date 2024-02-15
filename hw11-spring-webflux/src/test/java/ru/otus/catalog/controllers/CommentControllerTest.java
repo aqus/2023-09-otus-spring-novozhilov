@@ -1,12 +1,10 @@
 package ru.otus.catalog.controllers;
 
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -18,18 +16,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.otus.catalog.dto.AuthorDto;
-import ru.otus.catalog.dto.BookDto;
 import ru.otus.catalog.dto.CommentDto;
 import ru.otus.catalog.dto.CreateCommentDto;
-import ru.otus.catalog.dto.GenreDto;
 import ru.otus.catalog.dto.UpdateCommentDto;
 import ru.otus.catalog.models.Author;
 import ru.otus.catalog.models.Book;
@@ -58,8 +50,6 @@ class CommentControllerTest {
 
     private List<Comment> comments;
 
-    private List<BookDto> books;
-
     @BeforeEach
     void setUp() {
         commentDtos = List.of(
@@ -80,17 +70,6 @@ class CommentControllerTest {
                 new Comment(4L, "NewBookComment", new Book(2, "BookTitle_2",
                         new Author(2, "Author_2"), List.of(new Genre(3, "Genre_3"),
                         new Genre(4, "Genre_4"))))
-        );
-        books = List.of(
-                new BookDto(1, "BookTitle_1", new AuthorDto(1, "Author_1"),
-                        List.of(new GenreDto(1, "Genre_1"), new GenreDto(2, "Genre_2"))
-                ),
-                new BookDto(2, "BookTitle_2", new AuthorDto(2, "Author_2"),
-                        List.of(new GenreDto(3, "Genre_3"), new GenreDto(4, "Genre_4"))
-                ),
-                new BookDto(3, "BookTitle_3", new AuthorDto(3, "Author_3"),
-                        List.of(new GenreDto(5, "Genre_5"), new GenreDto(6, "Genre_6"))
-                )
         );
     }
     
