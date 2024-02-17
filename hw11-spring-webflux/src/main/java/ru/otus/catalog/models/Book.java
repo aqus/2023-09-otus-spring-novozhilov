@@ -1,53 +1,32 @@
 package ru.otus.catalog.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.NamedAttributeNode;
-import jakarta.persistence.NamedEntityGraph;
-import jakarta.persistence.Table;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
-@Entity
-@Table(name = "books")
-@NamedEntityGraph(
-        name = "book-entity-graph",
-        attributeNodes = {
-                @NamedAttributeNode("author")
-        }
-)
+@Document(collection = "books")
 public class Book {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private String id;
 
-    @Column(name = "title", nullable = false)
     private String title;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id")
     private Author author;
 
-    @Fetch(FetchMode.SUBSELECT)
-    @ManyToMany(targetEntity = Genre.class)
-    @JoinTable(name = "books_genres",
-            joinColumns = @JoinColumn(name = "book_id"),
-            inverseJoinColumns = @JoinColumn(name = "genre_id"))
+    @DBRef
     private List<Genre> genres;
 
-    public Book(long id, String title, Author author, List<Genre> genres) {
+    public Book(String id, String title, Author author, List<Genre> genres) {
         this.id = id;
+        this.title = title;
+        this.author = author;
+        this.genres = genres;
+    }
+
+    public Book(String title, Author author, List<Genre> genres) {
         this.title = title;
         this.author = author;
         this.genres = genres;
@@ -56,7 +35,7 @@ public class Book {
     public Book() {
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
@@ -72,7 +51,7 @@ public class Book {
         return genres;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

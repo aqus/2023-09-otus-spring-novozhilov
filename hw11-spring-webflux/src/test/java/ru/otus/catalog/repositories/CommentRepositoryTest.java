@@ -1,47 +1,39 @@
-//package ru.otus.catalog.repositories;
-//
-//import jakarta.persistence.TypedQuery;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-//import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-//import ru.otus.catalog.models.Comment;
-//
-//import java.util.List;
-//
-//import static org.assertj.core.api.Assertions.assertThat;
-//
-//@DisplayName("Jpa репозиторий комментариев к книгам")
-//@DataJpaTest
-//public class CommentRepositoryTest {
-//
-//    @Autowired
-//    private CommentRepository commentRepository;
-//
-//    @Autowired
-//    private TestEntityManager testEntityManager;
-//
-//    private List<Comment> dbComments;
-//
-//    @BeforeEach
-//    void setUp() {
-//        dbComments = getDbComments();
-//    }
-//
-//    @DisplayName(" должен загружать комментарии по id книги")
-//    @Test
-//    void shouldLoadCommentsByBookId() {
-//        List<Comment> actualComments = commentRepository.findAllByBookId(1);
-//        List<Comment> expectedComments = dbComments.stream().filter(c -> c.getBook().getId() == 1).toList();
-//        assertThat(actualComments).isNotEmpty();
-//        assertThat(actualComments).usingRecursiveComparison().isEqualTo(expectedComments);
-//    }
-//
-//    private List<Comment> getDbComments() {
-//        TypedQuery<Comment> query = testEntityManager.getEntityManager()
-//                .createQuery("select c from Comment c", Comment.class);
-//        return query.getResultList();
-//    }
-//}
+package ru.otus.catalog.repositories;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import ru.otus.catalog.models.Book;
+import ru.otus.catalog.models.Comment;
+
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@DisplayName("Mongo репозиторий комментариев к книгам")
+@DataMongoTest
+public class CommentRepositoryTest {
+
+    @Autowired
+    private CommentRepository commentRepository;
+
+    @Autowired
+    private MongoOperations mongoOperations;
+
+    @DisplayName("должен загружать комментарии книги")
+    @Test
+    void shouldLoadCommentsByBookId() {
+        Query bookQuery = new Query();
+        bookQuery.addCriteria(Criteria.where("title").is("BookTitle_1"));
+        Book book = mongoOperations.findOne(bookQuery, Book.class);
+        List<Comment> actualComments = commentRepository.findAllByBookId(book.getId());
+
+        assertThat(actualComments.get(0).getText()).isEqualTo("BookComment_1");
+        assertThat(actualComments.size()).isEqualTo(1);
+        assertThat(actualComments.get(0).getClass()).isEqualTo(Comment.class);
+    }
+}

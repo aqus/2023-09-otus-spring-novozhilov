@@ -1,0 +1,60 @@
+<table mat-table [dataSource]="books" class="mat-elevation-z8">
+    <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>Id.</th>
+        <td mat-cell *matCellDef="let element"> {{ element.id }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef>Title</th>
+        <td mat-cell *matCellDef="let element">
+            <a [routerLink]="['/books', element.id]">
+                <strong>{{ element.title }}</strong>
+            </a>
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="fullName">
+        <th mat-header-cell *matHeaderCellDef>Full Name</th>
+        <td mat-cell *matCellDef="let element"> {{ element.authorDto.fullName }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="genres">
+        <th mat-header-cell *matHeaderCellDef>Genres</th>
+        <td mat-cell *matCellDef="let element">
+            @for (genre of element.genreDtos; track genre.id) {
+                <div>{{ genre.name }}</div>
+            }
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let element">
+            <button mat-icon-button
+                    color="primary"
+                    aria-label="Update book"
+                    (click)="openUpdateDialog(element)"
+            >
+                <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button
+                    color="warn"
+                    aria-label="Delete book"
+                    (click)="deleteBook(element.id)"
+            >
+                <mat-icon>delete</mat-icon>
+            </button>
+        </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<div class="add-book">
+    <button mat-fab color="primary" aria-label="Add new book"
+        (click)="openAddDialog()"
+    >
+        <mat-icon>add</mat-icon>
+    </button>
+</div>
