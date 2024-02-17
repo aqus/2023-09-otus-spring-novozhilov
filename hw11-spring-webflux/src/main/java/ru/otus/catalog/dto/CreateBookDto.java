@@ -10,12 +10,12 @@ public class CreateBookDto {
     @NotBlank(message = "Mustn't be empty")
     private String title;
 
-    private @NotNull Long authorId;
+    private @NotNull String authorId;
 
     @NotNull
-    private List<Long> genresIds;
+    private List<String> genresIds;
 
-    public CreateBookDto(String title, Long authorId, List<Long> genresIds) {
+    public CreateBookDto(String title, String authorId, List<String> genresIds) {
         this.title = title;
         this.authorId = authorId;
         this.genresIds = genresIds;
@@ -32,19 +32,19 @@ public class CreateBookDto {
         this.title = title;
     }
 
-    public @NotNull Long getAuthorId() {
+    public @NotNull String getAuthorId() {
         return authorId;
     }
 
-    public void setAuthorId(@NotNull Long authorId) {
+    public void setAuthorId(@NotNull String authorId) {
         this.authorId = authorId;
     }
 
-    public List<Long> getGenresIds() {
+    public List<String> getGenresIds() {
         return genresIds;
     }
 
-    public void setGenresIds(List<Long> genresIds) {
+    public void setGenresIds(List<String> genresIds) {
         this.genresIds = genresIds;
     }
 }

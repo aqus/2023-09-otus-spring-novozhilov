@@ -9,9 +9,9 @@ public class CreateCommentDto {
     private String text;
 
     @NotNull
-    private Long bookId;
+    private String bookId;
 
-    public CreateCommentDto(String text, Long bookId) {
+    public CreateCommentDto(String text, String bookId) {
         this.text = text;
         this.bookId = bookId;
     }
@@ -27,11 +27,11 @@ public class CreateCommentDto {
         this.text = text;
     }
 
-    public Long getBookId() {
+    public String getBookId() {
         return bookId;
     }
 
-    public void setBookId(Long bookId) {
+    public void setBookId(String bookId) {
         this.bookId = bookId;
     }
 }

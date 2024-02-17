@@ -2,8 +2,6 @@ package ru.otus.catalog.controllers;
 
 import jakarta.validation.Valid;
 
-import jakarta.validation.constraints.NotNull;
-import org.apache.commons.lang3.Validate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,8 +22,10 @@ import ru.otus.catalog.models.Book;
 import ru.otus.catalog.models.Genre;
 import ru.otus.catalog.repositories.AuthorRepository;
 import ru.otus.catalog.repositories.BookRepository;
+import ru.otus.catalog.repositories.CommentCustomRepository;
 import ru.otus.catalog.repositories.GenreRepository;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 @RestController
@@ -37,12 +37,16 @@ public class BookController {
 
     private final GenreRepository genreRepository;
 
+    private final CommentCustomRepository commentCustomRepository;
+
     public BookController(BookRepository bookRepository,
                           AuthorRepository authorRepository,
-                          GenreRepository genreRepository) {
+                          GenreRepository genreRepository,
+                          CommentCustomRepository commentCustomRepository) {
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
         this.genreRepository = genreRepository;
+        this.commentCustomRepository = commentCustomRepository;
     }
 
     @GetMapping("api/v1/books")
@@ -51,19 +55,19 @@ public class BookController {
     }
 
     @GetMapping("api/v1/books/{id}")
-    public Mono<BookDto> findBookById(@PathVariable long id) {
+    public Mono<BookDto> findBookById(@PathVariable String id) {
         return bookRepository.findById(id).map(BookMapper::toBookDto);
     }
 
     @PostMapping("api/v1/books")
     public Mono<BookDto> insertBook(@RequestBody @Valid CreateBookDto createBookDto) {
-        return saveBook(0L, createBookDto.getTitle(), createBookDto.getAuthorId(), createBookDto.getGenresIds());
+        return saveBook(null, createBookDto.getTitle(), createBookDto.getAuthorId(), createBookDto.getGenresIds());
     }
 
     @PutMapping("api/v1/books")
     public Mono<BookDto> updateBook(@RequestBody @Valid UpdateBookDto updateBookDto) {
         return bookRepository.findById(updateBookDto.getId())
-                .switchIfEmpty(Mono.error(new EntityNotFoundException("Book with id %d is not found"
+                .switchIfEmpty(Mono.error(new EntityNotFoundException("Book with id %s is not found"
                         .formatted(updateBookDto.getId()))))
                 .zipWith(saveBook(updateBookDto.getId(), updateBookDto.getTitle(),
                         updateBookDto.getAuthorId(), updateBookDto.getGenresIds()))
@@ -71,18 +75,17 @@ public class BookController {
     }
 
     @DeleteMapping("api/v1/books/{id}")
-    public void deleteBook(@PathVariable long id) {
-        bookRepository.deleteById(id);
+    public void deleteBook(@PathVariable String id) {
+        bookRepository.deleteById(id).subscribe();
+        commentCustomRepository.deleteCommentsByBook(id);
     }
 
-    private Mono<BookDto> saveBook(@NotNull Long id,
+    private Mono<BookDto> saveBook(@Nullable String id,
                                    String title,
-                                   Long authorId,
-                                   List<Long> genreIds) {
-        Validate.notNull(id);
-
+                                   String authorId,
+                                   List<String> genreIds) {
         Mono<Author> authorMono = authorRepository.findById(authorId)
-                .switchIfEmpty(Mono.error(new EntityNotFoundException("Book with id %d is not found"
+                .switchIfEmpty(Mono.error(new EntityNotFoundException("Book with id %s is not found"
                         .formatted(authorId))));
         Flux<Genre> genres = genreRepository.findAllById(genreIds)
                 .switchIfEmpty(Mono.error(new EntityNotFoundException("Genres with ids %s not found"
@@ -91,7 +94,12 @@ public class BookController {
         return genres.collectList()
                 .zipWith(authorMono)
                 .flatMap(relations -> {
-                    Book book = new Book(id, title, relations.getT2(), relations.getT1());
+                    Book book;
+                    if (id == null) {
+                        book = new Book(title, relations.getT2(), relations.getT1());
+                    } else {
+                        book = new Book(id, title, relations.getT2(), relations.getT1());
+                    }
                     return bookRepository.save(book).map(BookMapper::toBookDto);
                 });
     }

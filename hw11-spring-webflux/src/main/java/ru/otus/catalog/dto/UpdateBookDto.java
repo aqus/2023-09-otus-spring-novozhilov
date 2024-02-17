@@ -8,18 +8,18 @@ import java.util.List;
 public class UpdateBookDto {
 
     @NotNull
-    private Long id;
+    private String id;
 
     @NotBlank(message = "Mustn't be empty")
     private String title;
 
     @NotNull
-    private Long authorId;
+    private String authorId;
 
     @NotNull
-    private List<Long> genresIds;
+    private List<String> genresIds;
 
-    public UpdateBookDto(Long id, String title, Long authorId, List<Long> genresIds) {
+    public UpdateBookDto(String id, String title, String authorId, List<String> genresIds) {
         this.id = id;
         this.title = title;
         this.authorId = authorId;
@@ -29,11 +29,11 @@ public class UpdateBookDto {
     public UpdateBookDto() {
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -45,19 +45,19 @@ public class UpdateBookDto {
         this.title = title;
     }
 
-    public Long getAuthorId() {
+    public String getAuthorId() {
         return authorId;
     }
 
-    public void setAuthorId(Long authorId) {
+    public void setAuthorId(String authorId) {
         this.authorId = authorId;
     }
 
-    public List<Long> getGenresIds() {
+    public List<String> getGenresIds() {
         return genresIds;
     }
 
-    public void setGenresIds(List<Long> genresIds) {
+    public void setGenresIds(List<String> genresIds) {
         this.genresIds = genresIds;
     }
 }

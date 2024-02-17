@@ -33,12 +33,12 @@ class GenreControllerTest {
     @BeforeEach
     void setUp() {
         genres = List.of(
-                new GenreDto(1, "Genre_1"),
-                new GenreDto(2, "Genre_2"),
-                new GenreDto(3, "Genre_3"),
-                new GenreDto(4, "Genre_4"),
-                new GenreDto(5, "Genre_5"),
-                new GenreDto(6, "Genre_6")
+                new GenreDto("1", "Genre_1"),
+                new GenreDto("2", "Genre_2"),
+                new GenreDto("3", "Genre_3"),
+                new GenreDto("4", "Genre_4"),
+                new GenreDto("5", "Genre_5"),
+                new GenreDto("6", "Genre_6")
         );
     }
     

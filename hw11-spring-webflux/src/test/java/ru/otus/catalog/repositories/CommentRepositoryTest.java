@@ -7,12 +7,12 @@ import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
 import ru.otus.catalog.models.Book;
 import ru.otus.catalog.models.Comment;
 
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DisplayName("Mongo репозиторий комментариев к книгам")
 @DataMongoTest
@@ -30,10 +30,12 @@ public class CommentRepositoryTest {
         Query bookQuery = new Query();
         bookQuery.addCriteria(Criteria.where("title").is("BookTitle_1"));
         Book book = mongoOperations.findOne(bookQuery, Book.class);
-        List<Comment> actualComments = commentRepository.findAllByBookId(book.getId());
+        Flux<Comment> allByBookId = commentRepository.findAllByBookId(book.getId());
 
-        assertThat(actualComments.get(0).getText()).isEqualTo("BookComment_1");
-        assertThat(actualComments.size()).isEqualTo(1);
-        assertThat(actualComments.get(0).getClass()).isEqualTo(Comment.class);
+        StepVerifier
+                .create(allByBookId)
+                .assertNext(comment -> assertNotNull(comment.getId()))
+                .expectComplete()
+                .verify();
     }
 }

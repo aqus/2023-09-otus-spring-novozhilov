@@ -6,15 +6,15 @@ import jakarta.validation.constraints.NotNull;
 public class UpdateCommentDto {
 
     @NotNull
-    private Long id;
+    private String id;
 
     @NotBlank(message = "Mustn't be empty")
     private String text;
 
     @NotNull
-    private Long bookId;
+    private String bookId;
 
-    public UpdateCommentDto(Long id, String text, Long bookId) {
+    public UpdateCommentDto(String id, String text, String bookId) {
         this.id = id;
         this.text = text;
         this.bookId = bookId;
@@ -23,11 +23,11 @@ public class UpdateCommentDto {
     public UpdateCommentDto() {
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -39,11 +39,11 @@ public class UpdateCommentDto {
         this.text = text;
     }
 
-    public Long getBookId() {
+    public String getBookId() {
         return bookId;
     }
 
-    public void setBookId(Long bookId) {
+    public void setBookId(String bookId) {
         this.bookId = bookId;
     }
 }

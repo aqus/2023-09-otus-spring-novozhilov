@@ -1,17 +1,19 @@
 spring:
-  datasource:
-    url: jdbc:h2:mem:maindb
-  sql:
-    init:
-      mode: always
-      data-locations: classpath:data.sql
-      schema-locations: classpath:schema.sql
-  jpa:
-    generate-ddl: false
-    hibernate:
-      ddl-auto: none
-    show-sql: true
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: library
+mongock:
+  runner-type: "InitializingBean"
+  change-logs-scan-package:
+    - ru.otus.catalog.changelogs
+  mongo-db:
+    write-concern:
+      journal: false
+    read-concern: local
 
-    properties:
-      hibernate:
-        format_sql: true
+logging:
+  level:
+    com.github.cloudyrock.mongock: debug
+    root: info

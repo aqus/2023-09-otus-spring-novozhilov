@@ -32,12 +32,12 @@ public class CommentController {
     }
 
     @GetMapping("api/v1/comments/{bookId}")
-    public Flux<CommentDto> findAllCommentsByBookId(@PathVariable long bookId) {
+    public Flux<CommentDto> findAllCommentsByBookId(@PathVariable String bookId) {
         return commentRepository.findAllByBookId(bookId).map(CommentMapper::toCommentDto);
     }
 
     @GetMapping("api/v1/comment/{id}")
-    public Mono<CommentDto> findCommentById(@PathVariable long id) {
+    public Mono<CommentDto> findCommentById(@PathVariable String id) {
         return commentRepository.findById(id).map(CommentMapper::toCommentDto);
     }
 
@@ -45,7 +45,7 @@ public class CommentController {
     public Mono<CommentDto> insertComment(@RequestBody @Valid CreateCommentDto createCommentDto) {
         CommentDto commentDto = new CommentDto(null, createCommentDto.getText(), createCommentDto.getBookId());
         return bookRepository.findById(commentDto.getBookId())
-                .switchIfEmpty(Mono.error(new EntityNotFoundException("Book with id %d not found"
+                .switchIfEmpty(Mono.error(new EntityNotFoundException("Book with id %s not found"
                         .formatted(commentDto.getBookId()))))
                 .flatMap(book -> {
                     Comment newComment = new Comment(commentDto.getId(), commentDto.getText(), book);
@@ -60,7 +60,7 @@ public class CommentController {
         CommentDto commentDto = new CommentDto(updateCommentDto.getId(), updateCommentDto.getText(),
                 updateCommentDto.getBookId());
         return commentRepository.findById(commentDto.getId())
-                .switchIfEmpty(Mono.error(new EntityNotFoundException("Comment with id %d not found"
+                .switchIfEmpty(Mono.error(new EntityNotFoundException("Comment with id %s not found"
                         .formatted(commentDto.getId()))))
                 .flatMap(comment -> {
                     comment.setText(commentDto.getText());
@@ -71,7 +71,7 @@ public class CommentController {
     }
 
     @DeleteMapping("api/v1/comments/{id}")
-    public void deleteComment(@PathVariable long id) {
-        commentRepository.deleteById(id);
+    public void deleteComment(@PathVariable String id) {
+        commentRepository.deleteById(id).subscribe();
     }
 }

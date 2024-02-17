@@ -8,7 +8,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -32,6 +31,7 @@ import ru.otus.catalog.dto.UpdateBookDto;
 import ru.otus.catalog.models.Book;
 import ru.otus.catalog.repositories.AuthorRepository;
 import ru.otus.catalog.repositories.BookRepository;
+import ru.otus.catalog.repositories.CommentCustomRepository;
 import ru.otus.catalog.repositories.GenreRepository;
 
 import java.util.List;
@@ -51,6 +51,9 @@ class BookControllerTest {
     @MockBean
     private GenreRepository genreRepository;
 
+    @MockBean
+    private CommentCustomRepository commentCustomRepository;
+
     @Autowired
     private BookController bookController;
     
@@ -59,14 +62,14 @@ class BookControllerTest {
     @BeforeEach
     void setUp() {
         books = List.of(
-                new BookDto(1, "BookTitle_1", new AuthorDto(1, "Author_1"),
-                        List.of(new GenreDto(1, "Genre_1"), new GenreDto(2, "Genre_2"))
+                new BookDto("1", "BookTitle_1", new AuthorDto("1", "Author_1"),
+                        List.of(new GenreDto("1", "Genre_1"), new GenreDto("2", "Genre_2"))
                 ),
-                new BookDto(2, "BookTitle_2", new AuthorDto(2, "Author_2"),
-                        List.of(new GenreDto(3, "Genre_3"), new GenreDto(4, "Genre_4"))
+                new BookDto("2", "BookTitle_2", new AuthorDto("2", "Author_2"),
+                        List.of(new GenreDto("3", "Genre_3"), new GenreDto("4", "Genre_4"))
                 ),
-                new BookDto(3, "BookTitle_3", new AuthorDto(3, "Author_3"),
-                        List.of(new GenreDto(5, "Genre_5"), new GenreDto(6, "Genre_6"))
+                new BookDto("3", "BookTitle_3", new AuthorDto("3", "Author_3"),
+                        List.of(new GenreDto("5", "Genre_5"), new GenreDto("6", "Genre_6"))
                 )
         );
     }
@@ -93,7 +96,7 @@ class BookControllerTest {
     @Test
     void shouldFindBookById() {
         BookDto bookDto = books.get(0);
-        when(bookRepository.findById(anyLong())).thenReturn(Mono.just(bookDto.toModelObject()));
+        when(bookRepository.findById(anyString())).thenReturn(Mono.just(bookDto.toModelObject()));
 
         WebTestClient testClient = WebTestClient.bindToController(bookController).build();
         testClient.get()
@@ -105,24 +108,24 @@ class BookControllerTest {
                 .expectBody(BookDto.class)
                 .isEqualTo(bookDto);
 
-        verify(bookRepository, times(1)).findById(anyLong());
+        verify(bookRepository, times(1)).findById(anyString());
     }
     
     @DisplayName("должен добавлять новую книгу")
     @Test
     void shouldCreateNewBook() {
-        BookDto expectedNewBook = new BookDto(4, "NewBookTitle_4", new AuthorDto(2, "Author_2"),
-                List.of(new GenreDto(2, "Genre_2"), new GenreDto(5, "Genre_5"))
+        BookDto expectedNewBook = new BookDto("4", "NewBookTitle_4", new AuthorDto("2", "Author_2"),
+                List.of(new GenreDto("2", "Genre_2"), new GenreDto("5", "Genre_5"))
         );
         when(bookRepository.save(any(Book.class))).thenReturn(
                 Mono.just(expectedNewBook.toModelObject()));
-        when(authorRepository.findById(anyLong())).thenReturn(
+        when(authorRepository.findById(anyString())).thenReturn(
                 Mono.just(expectedNewBook.getAuthorDto().toModelObject()));
         when(genreRepository.findAllById(anyList()))
-                .thenReturn(Flux.just(new GenreDto(2, "Genre_2").toModelObject(),
-                        new GenreDto(5, "Genre_5").toModelObject()));
+                .thenReturn(Flux.just(new GenreDto("2", "Genre_2").toModelObject(),
+                        new GenreDto("5", "Genre_5").toModelObject()));
 
-        CreateBookDto createBookDto = new CreateBookDto("NewBookTitle_4", 2L, List.of(2L, 5L));
+        CreateBookDto createBookDto = new CreateBookDto("NewBookTitle_4", "2", List.of("2", "5"));
         WebTestClient testClient = WebTestClient.bindToController(bookController).build();
         testClient.post()
                 .uri("/api/v1/books")
@@ -134,27 +137,27 @@ class BookControllerTest {
                 .isEqualTo(expectedNewBook);
 
         verify(bookRepository, times(1)).save(any(Book.class));
-        verify(authorRepository, times(1)).findById(anyLong());
+        verify(authorRepository, times(1)).findById(anyString());
         verify(genreRepository, times(1)).findAllById(anyList());
     }
     
     @DisplayName("должен обновлять книгу")
     @Test
     void shouldUpdateBook() {
-        BookDto actualBookDto = new BookDto(2, "BookTitle_2", new AuthorDto(2, "Author_2"),
-                List.of(new GenreDto(3, "Genre_3"), new GenreDto(4, "Genre_4")));
-        UpdateBookDto updateBookDto = new UpdateBookDto(2L, "UpdatedBookTitle_2", 2L, List.of(3L,4L));
+        BookDto actualBookDto = new BookDto("2", "BookTitle_2", new AuthorDto("2", "Author_2"),
+                List.of(new GenreDto("3", "Genre_3"), new GenreDto("4", "Genre_4")));
+        UpdateBookDto updateBookDto = new UpdateBookDto("2", "UpdatedBookTitle_2", "2", List.of("3", "4"));
         BookDto expectedBookDto = new BookDto(updateBookDto.getId(), updateBookDto.getTitle(),
-                new AuthorDto(2, "Author_2"),
-                List.of(new GenreDto(3, "Genre_3"), new GenreDto(4, "Genre_4")));
+                new AuthorDto("2", "Author_2"),
+                List.of(new GenreDto("3", "Genre_3"), new GenreDto("4", "Genre_4")));
 
-        when(bookRepository.findById(anyLong())).thenReturn(Mono.just(actualBookDto.toModelObject()));
+        when(bookRepository.findById(anyString())).thenReturn(Mono.just(actualBookDto.toModelObject()));
         when(bookRepository.save(any(Book.class))).thenReturn(Mono.just(expectedBookDto.toModelObject()));
-        when(authorRepository.findById(anyLong())).thenReturn(
+        when(authorRepository.findById(anyString())).thenReturn(
                 Mono.just(expectedBookDto.getAuthorDto().toModelObject()));
         when(genreRepository.findAllById(anyList()))
-                .thenReturn(Flux.just(new GenreDto(3, "Genre_3").toModelObject(),
-                        new GenreDto(4, "Genre_4").toModelObject()));
+                .thenReturn(Flux.just(new GenreDto("3", "Genre_3").toModelObject(),
+                        new GenreDto("4", "Genre_4").toModelObject()));
 
         WebTestClient testClient = WebTestClient.bindToController(bookController).build();
         testClient.put()
@@ -166,9 +169,9 @@ class BookControllerTest {
                 .expectBody(BookDto.class)
                 .isEqualTo(expectedBookDto);
 
-        verify(bookRepository, times(1)).findById(anyLong());
+        verify(bookRepository, times(1)).findById(anyString());
         verify(bookRepository, times(1)).save(any(Book.class));
-        verify(authorRepository, times(1)).findById(anyLong());
+        verify(authorRepository, times(1)).findById(anyString());
         verify(genreRepository, times(1)).findAllById(anyList());
     }
     
@@ -176,7 +179,7 @@ class BookControllerTest {
     @Test
     void shouldDeleteBook() throws Exception {
         BookDto bookDto = books.get(0);
-        doReturn(Mono.empty()).when(bookRepository).deleteById(anyLong());
+        doReturn(Mono.empty()).when(bookRepository).deleteById(anyString());
 
         WebTestClient testClient = WebTestClient.bindToController(bookController).build();
         testClient.delete()
@@ -185,6 +188,6 @@ class BookControllerTest {
                 .expectStatus()
                 .isOk();
 
-        verify(bookRepository, times(1)).deleteById(anyLong());
+        verify(bookRepository, times(1)).deleteById(anyString());
     }
 }

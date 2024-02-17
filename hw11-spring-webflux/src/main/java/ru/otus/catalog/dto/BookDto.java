@@ -8,7 +8,7 @@ import ru.otus.catalog.models.Book;
 
 public class BookDto {
 
-    private long id;
+    private String id;
 
     private String title;
 
@@ -16,7 +16,7 @@ public class BookDto {
 
     private List<GenreDto> genreDtos;
 
-    public BookDto(long id, String title, AuthorDto authorDto, List<GenreDto> genreDtos) {
+    public BookDto(String id, String title, AuthorDto authorDto, List<GenreDto> genreDtos) {
         this.id = id;
         this.title = title;
         this.authorDto = authorDto;
@@ -31,11 +31,11 @@ public class BookDto {
                 genreDtos.stream().map(GenreDto::toModelObject).collect(Collectors.toList()));
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -72,7 +72,8 @@ public class BookDto {
             return false;
         }
         BookDto bookDto = (BookDto) o;
-        return id == bookDto.id && Objects.equals(title, bookDto.title) && Objects.equals(authorDto, bookDto.authorDto)
+        return Objects.equals(id, bookDto.id) && Objects.equals(title, bookDto.title) && Objects.equals(authorDto,
+                bookDto.authorDto)
                 && Objects.equals(genreDtos, bookDto.genreDtos);
     }
 

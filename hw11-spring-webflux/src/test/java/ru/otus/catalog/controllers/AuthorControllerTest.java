@@ -34,9 +34,9 @@ class AuthorControllerTest {
     @BeforeEach
     void setUp() {
         authorsDto = List.of(
-                new AuthorDto(1, "Author_1"),
-                new AuthorDto(2, "Author_2"),
-                new AuthorDto(3, "Author_3")
+                new AuthorDto("1", "Author_1"),
+                new AuthorDto("2", "Author_2"),
+                new AuthorDto("3", "Author_3")
         );
     }
     

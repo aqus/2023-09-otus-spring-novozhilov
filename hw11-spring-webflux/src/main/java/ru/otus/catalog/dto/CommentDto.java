@@ -4,13 +4,13 @@ import java.util.Objects;
 
 public class CommentDto {
 
-    private Long id;
+    private String id;
 
     private String text;
 
-    private Long bookId;
+    private String bookId;
 
-    public CommentDto(Long id, String text, Long bookId) {
+    public CommentDto(String id, String text, String bookId) {
         this.id = id;
         this.text = text;
         this.bookId = bookId;
@@ -19,11 +19,11 @@ public class CommentDto {
     public CommentDto() {
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -35,11 +35,11 @@ public class CommentDto {
         this.text = text;
     }
 
-    public Long getBookId() {
+    public String getBookId() {
         return bookId;
     }
 
-    public void setBookId(Long bookId) {
+    public void setBookId(String bookId) {
         this.bookId = bookId;
     }
 

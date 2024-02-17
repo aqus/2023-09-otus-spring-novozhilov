@@ -6,11 +6,11 @@ import java.util.Objects;
 
 public class GenreDto {
 
-    private long id;
+    private String id;
 
     private String name;
 
-    public GenreDto(long id, String name) {
+    public GenreDto(String id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -22,11 +22,11 @@ public class GenreDto {
         return new Genre(id, name);
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -47,7 +47,7 @@ public class GenreDto {
             return false;
         }
         GenreDto genreDto = (GenreDto) o;
-        return id == genreDto.id && Objects.equals(name, genreDto.name);
+        return Objects.equals(id, genreDto.id) && Objects.equals(name, genreDto.name);
     }
 
     @Override

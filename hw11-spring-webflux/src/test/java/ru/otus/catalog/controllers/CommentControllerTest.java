@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -53,23 +53,23 @@ class CommentControllerTest {
     @BeforeEach
     void setUp() {
         commentDtos = List.of(
-                new CommentDto(1L, "BookComment_1", 1L),
-                new CommentDto(2L, "BookComment_2", 2L),
-                new CommentDto(3L, "BookComment_3", 3L)
+                new CommentDto("1", "BookComment_1", "1"),
+                new CommentDto("2", "BookComment_2", "2"),
+                new CommentDto("3", "BookComment_3", "3")
         );
         comments = List.of(
-                new Comment(1L, "BookComment_1", new Book(1, "BookTitle_1",
-                        new Author(1, "Author_1"), List.of(new Genre(1, "Genre_1"),
-                        new Genre(2, "Genre_2")))),
-                new Comment(2L, "BookComment_2", new Book(2, "BookTitle_2",
-                        new Author(2, "Author_2"), List.of(new Genre(3, "Genre_3"),
-                        new Genre(4, "Genre_4")))),
-                new Comment(3L, "BookComment_3", new Book(3, "BookTitle_3",
-                        new Author(3, "Author_3"), List.of(new Genre(5, "Genre_5"),
-                        new Genre(6, "Genre_6")))),
-                new Comment(4L, "NewBookComment", new Book(2, "BookTitle_2",
-                        new Author(2, "Author_2"), List.of(new Genre(3, "Genre_3"),
-                        new Genre(4, "Genre_4"))))
+                new Comment("1", "BookComment_1", new Book("1", "BookTitle_1",
+                        new Author("1", "Author_1"), List.of(new Genre("1", "Genre_1"),
+                        new Genre("2", "Genre_2")))),
+                new Comment("2", "BookComment_2", new Book("2", "BookTitle_2",
+                        new Author("2", "Author_2"), List.of(new Genre("3", "Genre_3"),
+                        new Genre("4", "Genre_4")))),
+                new Comment("3", "BookComment_3", new Book("3", "BookTitle_3",
+                        new Author("3", "Author_3"), List.of(new Genre("5", "Genre_5"),
+                        new Genre("6", "Genre_6")))),
+                new Comment("4", "NewBookComment", new Book("2", "BookTitle_2",
+                        new Author("2", "Author_2"), List.of(new Genre("3", "Genre_3"),
+                        new Genre("4", "Genre_4"))))
         );
     }
     
@@ -78,7 +78,7 @@ class CommentControllerTest {
     void shouldFindAllCommentsByBookId() throws Exception {
         CommentDto comment = commentDtos.get(0);
         List<CommentDto> expectedComments = List.of(comment);
-        long bookId = comment.getBookId();
+        String bookId = comment.getBookId();
         when(commentRepository.findAllByBookId(bookId)).thenReturn(Flux.fromArray(new Comment[]{comments.get(0)}));
 
         WebTestClient testClient = WebTestClient.bindToController(commentController).build();
@@ -99,7 +99,7 @@ class CommentControllerTest {
     @Test
     void shouldFindCommentById() throws Exception {
         CommentDto comment = commentDtos.get(0);
-        when(commentRepository.findById(anyLong())).thenReturn(Mono.just(comments.get(0)));
+        when(commentRepository.findById(anyString())).thenReturn(Mono.just(comments.get(0)));
 
         WebTestClient testClient = WebTestClient.bindToController(commentController).build();
         testClient.get()
@@ -117,10 +117,10 @@ class CommentControllerTest {
     @DisplayName("должен создавать новый комментарий")
     @Test
     void shouldCreateNewComment() throws Exception {
-        CommentDto expectedCommentDto = new CommentDto(4L, "NewBookComment", 2L);
+        CommentDto expectedCommentDto = new CommentDto("4", "NewBookComment", "2");
         CreateCommentDto newBookComment = new CreateCommentDto(expectedCommentDto.getText(),
                 expectedCommentDto.getBookId());
-        when(bookRepository.findById(anyLong())).thenReturn(Mono.just(comments.get(3).getBook()));
+        when(bookRepository.findById(anyString())).thenReturn(Mono.just(comments.get(3).getBook()));
         when(commentRepository.save(any())).thenReturn(Mono.just(comments.get(3)));
 
         WebTestClient testClient = WebTestClient.bindToController(commentController).build();
@@ -133,7 +133,7 @@ class CommentControllerTest {
                 .expectBody(CommentDto.class)
                 .isEqualTo(expectedCommentDto);
 
-        verify(bookRepository, times(1)).findById(anyLong());
+        verify(bookRepository, times(1)).findById(anyString());
         verify(commentRepository, times(1)).save(any());
     }
     
@@ -145,10 +145,10 @@ class CommentControllerTest {
                 commentDto.getBookId());
         CommentDto expectedCommentDto = new CommentDto(updatedBookComment.getId(), updatedBookComment.getText(),
                 updatedBookComment.getBookId());
-        Comment expectedComment = new Comment(updatedBookComment.getId(), updatedBookComment.getText(), new Book(1, "BookTitle_1",
-                new Author(1, "Author_1"), List.of(new Genre(1, "Genre_1"),
-                new Genre(2, "Genre_2"))));
-        when(commentRepository.findById(anyLong())).thenReturn(Mono.just(expectedComment));
+        Comment expectedComment = new Comment(updatedBookComment.getId(), updatedBookComment.getText(), new Book("1", "BookTitle_1",
+                new Author("1", "Author_1"), List.of(new Genre("1", "Genre_1"),
+                new Genre("2", "Genre_2"))));
+        when(commentRepository.findById(anyString())).thenReturn(Mono.just(expectedComment));
         when(commentRepository.save(any())).thenReturn(Mono.just(expectedComment));
 
         WebTestClient testClient = WebTestClient.bindToController(commentController).build();
@@ -161,7 +161,7 @@ class CommentControllerTest {
                 .expectBody(CommentDto.class)
                 .isEqualTo(expectedCommentDto);
 
-        verify(commentRepository, times(1)).findById(anyLong());
+        verify(commentRepository, times(1)).findById(anyString());
         verify(commentRepository, times(1)).save(any());
     }
     
@@ -170,7 +170,7 @@ class CommentControllerTest {
     @Test
     void shouldDeleteComment() throws Exception {
         CommentDto expectedComment = commentDtos.get(0);
-        doReturn(Mono.empty()).when(commentRepository).deleteById(anyLong());
+        doReturn(Mono.empty()).when(commentRepository).deleteById(anyString());
 
         WebTestClient testClient = WebTestClient.bindToController(commentController).build();
         testClient.delete()
@@ -179,6 +179,6 @@ class CommentControllerTest {
                 .expectStatus()
                 .isOk();
 
-        verify(commentRepository, times(1)).deleteById(anyLong());
+        verify(commentRepository, times(1)).deleteById(anyString());
     }
 }

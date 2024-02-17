@@ -1,8 +1,8 @@
 package ru.otus.catalog.repositories;
 
-import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import ru.otus.catalog.models.Author;
 
-public interface AuthorRepository extends ReactiveCrudRepository<Author, Long> {
+public interface AuthorRepository extends ReactiveMongoRepository<Author, String> {
 
 }

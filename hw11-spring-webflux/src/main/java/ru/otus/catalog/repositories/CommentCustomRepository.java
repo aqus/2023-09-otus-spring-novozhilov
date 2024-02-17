@@ -1,6 +1,8 @@
 package ru.otus.catalog.repositories;
 
+import com.mongodb.client.result.DeleteResult;
+
 public interface CommentCustomRepository {
 
-    void deleteCommentsByBook(String bookId);
+    DeleteResult deleteCommentsByBook(String bookId);
 }
