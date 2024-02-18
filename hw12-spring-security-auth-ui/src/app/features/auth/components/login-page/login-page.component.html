@@ -1,0 +1,23 @@
+<form [formGroup]="loginForm"
+      (ngSubmit)="submit()"
+      class="login-form"
+>
+    <mat-form-field>
+        <mat-label>Username</mat-label>
+        <input matInput formControlName="username">
+        <mat-error>Mustn't be empty</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input matInput formControlName="password">
+        <mat-error>Mustn't be empty</mat-error>
+    </mat-form-field>
+
+    <button mat-flat-button
+            color="primary"
+            aria-label="Login"
+            type="submit"
+    >
+        Login!
+    </button>
+</form>
