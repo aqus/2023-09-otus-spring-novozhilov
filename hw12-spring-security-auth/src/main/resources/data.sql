@@ -15,3 +15,6 @@ insert into books_genres(book_id, genre_id)
 values (1, 1),   (1, 2),
        (2, 3),   (2, 4),
        (3, 5),   (3, 6);
+
+insert into users(username, password, last_login, active)
+values ('user', '$2a$12$Q59DuP9OJUFAnYSzfsrVpusLVr/vFxQiA1JyhNfXvM3xaXUmqbT6i', CURRENT_TIMESTAMP, TRUE);

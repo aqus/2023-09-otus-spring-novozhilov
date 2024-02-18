@@ -29,3 +29,11 @@ create table books_genres (
     genre_id bigint references genres(id) on delete cascade,
     primary key (book_id, genre_id)
 );
+
+create table if not exists users (
+   id bigserial PRIMARY KEY,
+   username VARCHAR(100) UNIQUE NOT NULL,
+   password VARCHAR(100) NOT NULL,
+   last_login  TIMESTAMP NOT NULL,
+   active BOOLEAN NOT NULL
+)
