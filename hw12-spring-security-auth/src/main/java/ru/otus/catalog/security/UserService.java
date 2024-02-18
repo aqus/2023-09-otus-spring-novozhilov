@@ -27,7 +27,6 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User with username %s not found".formatted(username)));
         user.setLastLogin(LocalDateTime.now());
-        System.out.println(user.getPassword());
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
                 Collections.emptyList());
     }

@@ -16,20 +16,20 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfiguration {
 
+    private final UserDetailsService userDetailsService;
+
     public SecurityConfiguration(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
-
-    private final UserDetailsService userDetailsService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest().authenticated()
-                )
+                        .requestMatchers("/api/v1/login").permitAll()
+                        .anyRequest().authenticated())
                 .formLogin(Customizer.withDefaults());
         return http.build();
     }
