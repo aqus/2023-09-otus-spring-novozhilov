@@ -1,11 +1,12 @@
 package ru.otus.catalog.security;
 
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.otus.catalog.models.User;
+import ru.otus.catalog.models.UserInfo;
 import ru.otus.catalog.repositories.UserRepository;
 
 import java.time.LocalDateTime;
@@ -23,11 +24,11 @@ public class UserService implements UserDetailsService {
     @Transactional
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
+        UserInfo userInfo = userRepository.findByUsername(username)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User with username %s not found".formatted(username)));
-        user.setLastLogin(LocalDateTime.now());
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
+        userInfo.setLastLogin(LocalDateTime.now());
+        return new User(userInfo.getUsername(), userInfo.getPassword(),
                 Collections.emptyList());
     }
 }

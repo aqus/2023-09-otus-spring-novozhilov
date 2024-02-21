@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class UserInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -28,7 +28,7 @@ public class User {
     @Column(name = "active", nullable = false)
     private Boolean active;
 
-    public User(long id, String username, String password, LocalDateTime lastLogin, Boolean active) {
+    public UserInfo(long id, String username, String password, LocalDateTime lastLogin, Boolean active) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -36,7 +36,7 @@ public class User {
         this.active = active;
     }
 
-    public User() {
+    public UserInfo() {
     }
 
     public long getId() {
