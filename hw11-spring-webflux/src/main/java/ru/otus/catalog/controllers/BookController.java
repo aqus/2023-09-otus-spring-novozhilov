@@ -1,5 +1,6 @@
 package ru.otus.catalog.controllers;
 
+import com.mongodb.client.result.DeleteResult;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -75,9 +76,9 @@ public class BookController {
     }
 
     @DeleteMapping("api/v1/books/{id}")
-    public void deleteBook(@PathVariable String id) {
-        bookRepository.deleteById(id).subscribe();
-        commentCustomRepository.deleteCommentsByBook(id);
+    public Mono<DeleteResult> deleteBook(@PathVariable String id) {
+        return bookRepository.deleteById(id)
+                        .map(result -> commentCustomRepository.deleteCommentsByBook(id));
     }
 
     private Mono<BookDto> saveBook(@Nullable String id,

@@ -71,7 +71,7 @@ public class CommentController {
     }
 
     @DeleteMapping("api/v1/comments/{id}")
-    public void deleteComment(@PathVariable String id) {
-        commentRepository.deleteById(id).subscribe();
+    public Mono<Void> deleteComment(@PathVariable String id) {
+        return commentRepository.deleteById(id);
     }
 }
