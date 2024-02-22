@@ -15,3 +15,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
+jwt:
+  private.key: classpath:app.pem
+  public.key: classpath:app.pub
