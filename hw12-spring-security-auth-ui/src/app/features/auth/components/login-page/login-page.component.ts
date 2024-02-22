@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../types/user';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-login-page',
@@ -29,7 +30,7 @@ export class LoginPageComponent {
         password: ['', Validators.required]
     });
 
-    constructor(private fb: FormBuilder, private auth: AuthService) {
+    constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
     }
 
     submit() {
@@ -37,6 +38,9 @@ export class LoginPageComponent {
             return;
         }
 
-        this.auth.login(this.loginForm.getRawValue() as User);
+        this.auth.login(this.loginForm.getRawValue() as User)
+            .subscribe(token => {
+                this.router.navigateByUrl('/');
+            });
     }
 }
