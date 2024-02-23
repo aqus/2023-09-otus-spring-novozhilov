@@ -13,3 +13,7 @@ spring:
     hibernate:
       ddl-auto: none
     show-sql: true
+
+jwt:
+  private.key: classpath:app.pem
+  public.key: classpath:app.pub
