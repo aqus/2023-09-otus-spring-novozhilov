@@ -78,7 +78,7 @@ public class BookController {
     @DeleteMapping("api/v1/books/{id}")
     public Mono<DeleteResult> deleteBook(@PathVariable String id) {
         return bookRepository.deleteById(id)
-                        .map(result -> commentCustomRepository.deleteCommentsByBook(id));
+                .flatMap(result -> commentCustomRepository.deleteCommentsByBook(id));
     }
 
     private Mono<BookDto> saveBook(@Nullable String id,

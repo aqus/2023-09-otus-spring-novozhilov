@@ -1,8 +1,9 @@
 package ru.otus.catalog.repositories;
 
 import com.mongodb.client.result.DeleteResult;
+import reactor.core.publisher.Mono;
 
 public interface CommentCustomRepository {
 
-    DeleteResult deleteCommentsByBook(String bookId);
+    Mono<DeleteResult> deleteCommentsByBook(String bookId);
 }
