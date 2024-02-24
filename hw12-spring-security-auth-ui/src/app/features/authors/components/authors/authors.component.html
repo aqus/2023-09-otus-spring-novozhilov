@@ -1,0 +1,12 @@
+<div class="content">
+    @for (author of authors; track author.id) {
+        <div>
+            <img src="https://placehold.it/200x200" alt="author">
+            <div class="author-name">
+                {{ author.fullName }}
+            </div>
+        </div>
+    } @empty {
+        Empty list of authors
+    }
+</div>
