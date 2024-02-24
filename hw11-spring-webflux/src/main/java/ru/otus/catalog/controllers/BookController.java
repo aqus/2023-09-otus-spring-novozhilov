@@ -67,7 +67,7 @@ public class BookController {
 
     @PutMapping("api/v1/books")
     public Mono<BookDto> updateBook(@RequestBody @Valid UpdateBookDto updateBookDto) {
-        return bookRepository.findById(updateBookDto.getId())
+        return bookRepository.existsById(updateBookDto.getId())
                 .switchIfEmpty(Mono.error(new EntityNotFoundException("Book with id %s is not found"
                         .formatted(updateBookDto.getId()))))
                 .zipWith(saveBook(updateBookDto.getId(), updateBookDto.getTitle(),

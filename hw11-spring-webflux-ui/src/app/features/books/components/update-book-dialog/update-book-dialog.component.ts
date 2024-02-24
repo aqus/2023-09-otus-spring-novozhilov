@@ -75,7 +75,7 @@ export class UpdateBookDialogComponent {
             }
 
             if (typeof value == 'string') {
-                return (value as string).split(",").map(Number);
+                return (value as string).split(",").map(String);
             }
 
             return value;
