@@ -16,5 +16,6 @@ values (1, 1),   (1, 2),
        (2, 3),   (2, 4),
        (3, 5),   (3, 6);
 
-insert into users(username, password, last_login, active)
-values ('user', '$2a$12$Q59DuP9OJUFAnYSzfsrVpusLVr/vFxQiA1JyhNfXvM3xaXUmqbT6i', CURRENT_TIMESTAMP, TRUE);
+insert into users(username, password, role, last_login, active)
+values ('user', '$2a$12$Q59DuP9OJUFAnYSzfsrVpusLVr/vFxQiA1JyhNfXvM3xaXUmqbT6i', 'ROLE_USER', CURRENT_TIMESTAMP, TRUE),
+('admin', '$2a$12$lDVgFDU1jtOxOp./uq.Vkug0NmVHrX5szfbw6Lz4WVbs35npAluZC', 'ROLE_ADMIN', CURRENT_TIMESTAMP, TRUE);

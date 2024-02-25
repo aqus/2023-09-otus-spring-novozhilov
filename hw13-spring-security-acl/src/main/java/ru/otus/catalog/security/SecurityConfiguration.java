@@ -9,10 +9,14 @@ import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -48,8 +52,18 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                                .requestMatchers("/api/v1/authenticate").permitAll()
-                                .anyRequest().authenticated())
+                        .requestMatchers("/api/v1/authenticate").permitAll()
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/v1/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/v1/books/**",
+                                "/api/v1/comments/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.PUT,
+                                "/api/v1/books/**",
+                                "/api/v1/comments/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.DELETE,
+                                "/api/v1/books/{id}").hasRole("ADMIN")
+                        .anyRequest().authenticated())
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/v1/authenticate"))
                 .formLogin(Customizer.withDefaults())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))

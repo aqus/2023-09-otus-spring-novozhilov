@@ -26,9 +26,8 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserInfo userInfo = userRepository.findByUsername(username)
                 .orElseThrow(() ->
-                        new UsernameNotFoundException("User with username %s not found".formatted(username)));
+                        new UsernameNotFoundException("User with username %s is not found".formatted(username)));
         userInfo.setLastLogin(LocalDateTime.now());
-        return new User(userInfo.getUsername(), userInfo.getPassword(),
-                Collections.emptyList());
+        return new User(userInfo.getUsername(), userInfo.getPassword(), Collections.singletonList(userInfo::getRole));
     }
 }

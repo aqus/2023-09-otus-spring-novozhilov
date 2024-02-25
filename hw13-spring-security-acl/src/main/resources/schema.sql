@@ -34,6 +34,7 @@ create table if not exists users (
    id bigserial PRIMARY KEY,
    username VARCHAR(100) UNIQUE NOT NULL,
    password VARCHAR(100) NOT NULL,
+   role VARCHAR(100) NOT NULL,
    last_login  TIMESTAMP NOT NULL,
    active BOOLEAN NOT NULL
 )

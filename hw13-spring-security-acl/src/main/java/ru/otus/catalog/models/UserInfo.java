@@ -22,16 +22,20 @@ public class UserInfo {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "role", nullable = false)
+    private String role;
+
     @Column(name = "last_login", nullable = false)
     private LocalDateTime lastLogin;
 
     @Column(name = "active", nullable = false)
     private Boolean active;
 
-    public UserInfo(long id, String username, String password, LocalDateTime lastLogin, Boolean active) {
+    public UserInfo(long id, String username, String password, String role, LocalDateTime lastLogin, Boolean active) {
         this.id = id;
         this.username = username;
         this.password = password;
+        this.role = role;
         this.lastLogin = lastLogin;
         this.active = active;
     }
@@ -77,5 +81,13 @@ public class UserInfo {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
