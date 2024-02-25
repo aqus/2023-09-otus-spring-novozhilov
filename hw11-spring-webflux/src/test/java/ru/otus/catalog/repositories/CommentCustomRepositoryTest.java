@@ -5,9 +5,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.ReactiveMongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.otus.catalog.models.Book;
 import ru.otus.catalog.models.Comment;
 
@@ -24,25 +26,31 @@ class CommentCustomRepositoryTest {
     private CommentCustomRepository commentCustomRepository;
 
     @Autowired
-    private MongoOperations mongoOperations;
+    private ReactiveMongoOperations mongoOperations;
 
     @DisplayName("должен удалять комментарии книги")
     @Test
     void shouldDeleteBookComment() {
         Query bookQuery = new Query();
         bookQuery.addCriteria(Criteria.where("title").is("BookTitle_1"));
-        Book book = mongoOperations.findOne(bookQuery, Book.class);
+        Mono<Book> book = mongoOperations.findOne(bookQuery, Book.class);
 
-        String bookId = book.getId();
+        List<Comment> comments = book
+                .map(book1 -> new Query(Criteria.where("book").is(book1.getId())))
+                .map(query -> mongoOperations.find(query, Comment.class))
+                .flatMap(Flux::collectList)
+                .block();
 
-        Query commentsQuery = new Query(Criteria.where("book").is(bookId));
-        List<Comment> comments = mongoOperations.find(commentsQuery, Comment.class);
         assertThat(comments.get(0).getText()).isEqualTo("BookComment_1");
 
-        commentCustomRepository.deleteCommentsByBook(bookId);
+        book.flatMap(book1 -> commentCustomRepository.deleteCommentsByBook(book1.getId())).block();
 
-        Query afterDeleteQuery = new Query(Criteria.where("book").is(bookId));
-        List<Comment> afterDeleteComments = mongoOperations.find(afterDeleteQuery, Comment.class);
+        List<Comment> afterDeleteComments = book
+                .map(book1 -> new Query(Criteria.where("book").is(book1.getId())))
+                .map(query -> mongoOperations.find(query, Comment.class))
+                .flatMap(Flux::collectList)
+                .block();
+
         assertThat(afterDeleteComments).isEmpty();
     }
 }

@@ -151,7 +151,7 @@ class BookControllerTest {
                 new AuthorDto("2", "Author_2"),
                 List.of(new GenreDto("3", "Genre_3"), new GenreDto("4", "Genre_4")));
 
-        when(bookRepository.findById(anyString())).thenReturn(Mono.just(actualBookDto.toModelObject()));
+        when(bookRepository.existsById(anyString())).thenReturn(Mono.just(true));
         when(bookRepository.save(any(Book.class))).thenReturn(Mono.just(expectedBookDto.toModelObject()));
         when(authorRepository.findById(anyString())).thenReturn(
                 Mono.just(expectedBookDto.getAuthorDto().toModelObject()));
@@ -169,7 +169,7 @@ class BookControllerTest {
                 .expectBody(BookDto.class)
                 .isEqualTo(expectedBookDto);
 
-        verify(bookRepository, times(1)).findById(anyString());
+        verify(bookRepository, times(1)).existsById(anyString());
         verify(bookRepository, times(1)).save(any(Book.class));
         verify(authorRepository, times(1)).findById(anyString());
         verify(genreRepository, times(1)).findAllById(anyList());
