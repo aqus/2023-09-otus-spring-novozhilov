@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.util.function.Tuple2;
 import ru.otus.catalog.dto.BookDto;
 import ru.otus.catalog.dto.CreateBookDto;
 import ru.otus.catalog.dto.UpdateBookDto;
@@ -70,9 +69,8 @@ public class BookController {
         return bookRepository.existsById(updateBookDto.getId())
                 .switchIfEmpty(Mono.error(new EntityNotFoundException("Book with id %s is not found"
                         .formatted(updateBookDto.getId()))))
-                .zipWith(saveBook(updateBookDto.getId(), updateBookDto.getTitle(),
-                        updateBookDto.getAuthorId(), updateBookDto.getGenresIds()))
-                .map(Tuple2::getT2);
+                .flatMap(result -> saveBook(updateBookDto.getId(), updateBookDto.getTitle(),
+                        updateBookDto.getAuthorId(), updateBookDto.getGenresIds()));
     }
 
     @DeleteMapping("api/v1/books/{id}")
