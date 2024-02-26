@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
@@ -31,11 +30,10 @@ import ru.otus.catalog.dto.UpdateBookDto;
 import ru.otus.catalog.models.Book;
 import ru.otus.catalog.repositories.AuthorRepository;
 import ru.otus.catalog.repositories.BookRepository;
-import ru.otus.catalog.repositories.CommentCustomRepository;
+import ru.otus.catalog.repositories.CommentRepository;
 import ru.otus.catalog.repositories.GenreRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @DisplayName("Контроллер книг")
 @SpringBootTest(classes = {BookController.class})
@@ -52,7 +50,7 @@ class BookControllerTest {
     private GenreRepository genreRepository;
 
     @MockBean
-    private CommentCustomRepository commentCustomRepository;
+    private CommentRepository commentRepository;
 
     @Autowired
     private BookController bookController;
@@ -180,6 +178,7 @@ class BookControllerTest {
     void shouldDeleteBook() throws Exception {
         BookDto bookDto = books.get(0);
         doReturn(Mono.empty()).when(bookRepository).deleteById(anyString());
+        doReturn(Flux.empty()).when(commentRepository).deleteAllByBookId(anyString());
 
         WebTestClient testClient = WebTestClient.bindToController(bookController).build();
         testClient.delete()
@@ -189,5 +188,6 @@ class BookControllerTest {
                 .isOk();
 
         verify(bookRepository, times(1)).deleteById(anyString());
+        verify(commentRepository, times(1)).deleteAllByBookId(anyString());
     }
 }

@@ -1,6 +1,5 @@
 package ru.otus.catalog.controllers;
 
-import com.mongodb.client.result.DeleteResult;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,7 +21,7 @@ import ru.otus.catalog.models.Book;
 import ru.otus.catalog.models.Genre;
 import ru.otus.catalog.repositories.AuthorRepository;
 import ru.otus.catalog.repositories.BookRepository;
-import ru.otus.catalog.repositories.CommentCustomRepository;
+import ru.otus.catalog.repositories.CommentRepository;
 import ru.otus.catalog.repositories.GenreRepository;
 
 import javax.annotation.Nullable;
@@ -37,16 +36,16 @@ public class BookController {
 
     private final GenreRepository genreRepository;
 
-    private final CommentCustomRepository commentCustomRepository;
+    private final CommentRepository commentRepository;
 
     public BookController(BookRepository bookRepository,
                           AuthorRepository authorRepository,
                           GenreRepository genreRepository,
-                          CommentCustomRepository commentCustomRepository) {
+                          CommentRepository commentRepository) {
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
         this.genreRepository = genreRepository;
-        this.commentCustomRepository = commentCustomRepository;
+        this.commentRepository = commentRepository;
     }
 
     @GetMapping("api/v1/books")
@@ -74,9 +73,9 @@ public class BookController {
     }
 
     @DeleteMapping("api/v1/books/{id}")
-    public Mono<DeleteResult> deleteBook(@PathVariable String id) {
+    public Flux<Void> deleteBook(@PathVariable String id) {
         return bookRepository.deleteById(id)
-                .flatMap(result -> commentCustomRepository.deleteCommentsByBook(id));
+                .thenMany(commentRepository.deleteAllByBookId(id));
     }
 
     private Mono<BookDto> saveBook(@Nullable String id,
