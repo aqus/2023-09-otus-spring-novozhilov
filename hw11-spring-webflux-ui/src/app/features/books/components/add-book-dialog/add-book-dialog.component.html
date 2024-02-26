@@ -1,0 +1,34 @@
+<h1 mat-dialog-title>
+    Adding new book.
+</h1>
+<form [formGroup]="addForm"
+      (ngSubmit)="submit()"
+>
+    <div mat-dialog-content
+         class="update-form"
+    >
+        <mat-form-field>
+            <mat-label>Book name</mat-label>
+            <input matInput formControlName="title">
+            <mat-error>Mustn't be empty</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Author id</mat-label>
+            <input matInput formControlName="authorId">
+            <mat-error>Mustn't be empty</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Genres ids</mat-label>
+            <input matInput formControlName="genresIds">
+            <mat-error>Mustn't be empty</mat-error>
+        </mat-form-field>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-button mat-dialog-close (click)="onCancel()">
+            Cancel
+        </button>
+        <button mat-button color="primary" type="submit" cdkFocusInitial>
+            Update
+        </button>
+    </div>
+</form>
