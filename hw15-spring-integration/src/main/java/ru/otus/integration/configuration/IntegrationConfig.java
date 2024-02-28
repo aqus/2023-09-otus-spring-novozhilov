@@ -9,7 +9,6 @@ import org.springframework.integration.dsl.PollerSpec;
 import org.springframework.integration.dsl.Pollers;
 import org.springframework.integration.scheduling.PollerMetadata;
 import ru.otus.integration.domain.Butterfly;
-import ru.otus.integration.domain.Caterpillar;
 import ru.otus.integration.services.ButterflyService;
 
 @Configuration
