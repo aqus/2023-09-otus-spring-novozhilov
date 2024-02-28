@@ -21,6 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import ru.otus.catalog.dto.GenreDto;
+import ru.otus.catalog.security.JwtAuthenticationFilter;
 import ru.otus.catalog.security.UserService;
 import ru.otus.catalog.services.GenreService;
 
@@ -28,7 +29,8 @@ import java.util.List;
 
 @DisplayName("Контроллер жанров")
 @WebMvcTest(value = GenreController.class, excludeFilters = {
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = WebSecurityConfigurer.class)},
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = WebSecurityConfigurer.class),
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = JwtAuthenticationFilter.class)},
         excludeAutoConfiguration = {SecurityAutoConfiguration.class, SecurityFilterAutoConfiguration.class})
 class GenreControllerTest {
 

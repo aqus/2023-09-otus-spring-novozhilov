@@ -11,6 +11,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -21,7 +24,10 @@ import ru.otus.catalog.services.AuthorService;
 import ru.otus.catalog.services.BookService;
 import ru.otus.catalog.services.CommentService;
 import ru.otus.catalog.services.GenreService;
+import ru.otus.catalog.services.JwtService;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.anonymous;
@@ -57,11 +63,14 @@ class ControllersEndpointsSecurityTest {
     @MockBean
     private GenreService genreService;
 
+    @MockBean
+    private JwtService jwtService;
+
     @ParameterizedTest(name = "{index} - {0}")
     @ArgumentsSource(TestArgumentsProvider.class)
     void shouldCheckEndpointAvailability(String name, RequestPostProcessor user, MockHttpServletRequestBuilder method,
                                          ResultMatcher resultMatcher) throws Exception {
-        mockMvc.perform(method.with(user).with(csrf())).andExpect(resultMatcher);
+        mockMvc.perform(method.with(user)).andExpect(resultMatcher);
     }
 
     static class TestArgumentsProvider implements ArgumentsProvider {
@@ -103,7 +112,42 @@ class ControllersEndpointsSecurityTest {
                             put("/api/v1/books").contentType(MediaType.APPLICATION_JSON)
                                     .content(""), status().isUnauthorized()),
 
-                    Arguments.of("auth delete book", user("user"),
+                    Arguments.of("auth delete book", user(new UserDetails() {
+                                @Override
+                                public Collection<? extends GrantedAuthority> getAuthorities() {
+                                    return List.of( new SimpleGrantedAuthority("ROLE_ADMIN"));
+                                }
+
+                                @Override
+                                public String getPassword() {
+                                    return null;
+                                }
+
+                                @Override
+                                public String getUsername() {
+                                    return "admin";
+                                }
+
+                                @Override
+                                public boolean isAccountNonExpired() {
+                                    return true;
+                                }
+
+                                @Override
+                                public boolean isAccountNonLocked() {
+                                    return true;
+                                }
+
+                                @Override
+                                public boolean isCredentialsNonExpired() {
+                                    return true;
+                                }
+
+                                @Override
+                                public boolean isEnabled() {
+                                    return true;
+                                }
+                            }),
                             delete("/api/v1/books/{id}", 0L), status().isOk()),
 
                     Arguments.of("anonymous delete book", anonymous(),

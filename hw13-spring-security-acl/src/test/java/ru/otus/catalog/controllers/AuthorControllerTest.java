@@ -22,13 +22,15 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import ru.otus.catalog.dto.AuthorDto;
+import ru.otus.catalog.security.JwtAuthenticationFilter;
 import ru.otus.catalog.services.AuthorService;
 
 import java.util.List;
 
 @DisplayName("Контроллер авторов")
 @WebMvcTest(value = AuthorController.class, excludeFilters = {
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = WebSecurityConfigurer.class)},
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = WebSecurityConfigurer.class),
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = JwtAuthenticationFilter.class)},
         excludeAutoConfiguration = {SecurityAutoConfiguration.class, SecurityFilterAutoConfiguration.class})
 class AuthorControllerTest {
     

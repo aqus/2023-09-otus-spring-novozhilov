@@ -31,6 +31,7 @@ import ru.otus.catalog.dto.BookDto;
 import ru.otus.catalog.dto.CreateBookDto;
 import ru.otus.catalog.dto.GenreDto;
 import ru.otus.catalog.dto.UpdateBookDto;
+import ru.otus.catalog.security.JwtAuthenticationFilter;
 import ru.otus.catalog.security.UserService;
 import ru.otus.catalog.services.BookService;
 
@@ -38,7 +39,8 @@ import java.util.List;
 
 @DisplayName("Контроллер книг")
 @WebMvcTest(value = BookController.class, excludeFilters = {
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = WebSecurityConfigurer.class)},
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = WebSecurityConfigurer.class),
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = JwtAuthenticationFilter.class)},
         excludeAutoConfiguration = {SecurityAutoConfiguration.class, SecurityFilterAutoConfiguration.class})
 class BookControllerTest {
     
