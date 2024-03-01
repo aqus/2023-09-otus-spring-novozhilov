@@ -28,6 +28,7 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User with username %s is not found".formatted(username)));
         userInfo.setLastLogin(LocalDateTime.now());
-        return new User(userInfo.getUsername(), userInfo.getPassword(), Collections.singletonList(userInfo::getRole));
+        return new User(userInfo.getUsername(), userInfo.getPassword(),
+                Collections.singletonList(userInfo::getAuthority));
     }
 }

@@ -27,8 +27,8 @@ public class UserInfo implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "role", nullable = false)
-    private String role;
+    @Column(name = "authority", nullable = false)
+    private String authority;
 
     @Column(name = "last_login", nullable = false)
     private LocalDateTime lastLogin;
@@ -77,7 +77,7 @@ public class UserInfo implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role));
+        return List.of(new SimpleGrantedAuthority(authority));
     }
 
     public String getPassword() {
@@ -104,11 +104,11 @@ public class UserInfo implements UserDetails {
         this.active = active;
     }
 
-    public String getRole() {
-        return role;
+    public String getAuthority() {
+        return authority;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setAuthority(String authority) {
+        this.authority = authority;
     }
 }
