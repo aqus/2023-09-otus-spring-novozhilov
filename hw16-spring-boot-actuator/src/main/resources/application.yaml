@@ -18,3 +18,16 @@ spring:
 jwt:
   private.key: classpath:app.pem
   public.key: classpath:app.pub
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "metrics,health,logfile,prometheus"
+  health:
+    defaults:
+      enabled: true
+
+logging:
+  file:
+    name: ./logs/library.log
