@@ -23,7 +23,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: "metrics,health,logfile,prometheus"
+        include: "metrics,health,logfile"
   health:
     defaults:
       enabled: true
