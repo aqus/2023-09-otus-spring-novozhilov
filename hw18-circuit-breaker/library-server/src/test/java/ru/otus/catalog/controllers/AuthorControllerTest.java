@@ -8,35 +8,26 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import ru.otus.catalog.dto.AuthorDto;
-import ru.otus.catalog.security.JwtAuthenticationFilter;
 import ru.otus.catalog.services.AuthorService;
 
 import java.util.List;
 
 @DisplayName("Контроллер авторов")
-@WebMvcTest(value = AuthorController.class, excludeFilters = {
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = WebSecurityConfigurer.class),
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = JwtAuthenticationFilter.class)},
-        excludeAutoConfiguration = {SecurityAutoConfiguration.class, SecurityFilterAutoConfiguration.class})
+@WebMvcTest(AuthorController.class)
 class AuthorControllerTest {
-    
+
     @Autowired
     private MockMvc mockMvc;
-    
+
     @MockBean
     private AuthorService authorService;
 
@@ -53,7 +44,7 @@ class AuthorControllerTest {
                 new AuthorDto(3, "Author_3")
         );
     }
-    
+
     @DisplayName("должен возвращать список всех авторов")
     @Test
     void shouldFindAllAuthors() throws Exception {

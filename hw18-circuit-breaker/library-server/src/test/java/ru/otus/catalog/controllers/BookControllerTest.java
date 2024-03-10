@@ -12,14 +12,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
-import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -31,33 +26,25 @@ import ru.otus.catalog.dto.BookDto;
 import ru.otus.catalog.dto.CreateBookDto;
 import ru.otus.catalog.dto.GenreDto;
 import ru.otus.catalog.dto.UpdateBookDto;
-import ru.otus.catalog.security.JwtAuthenticationFilter;
-import ru.otus.catalog.security.UserService;
 import ru.otus.catalog.services.BookService;
 
 import java.util.List;
 
 @DisplayName("Контроллер книг")
-@WebMvcTest(value = BookController.class, excludeFilters = {
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = WebSecurityConfigurer.class),
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = JwtAuthenticationFilter.class)},
-        excludeAutoConfiguration = {SecurityAutoConfiguration.class, SecurityFilterAutoConfiguration.class})
+@WebMvcTest(BookController.class)
 class BookControllerTest {
-    
+
     @Autowired
     private MockMvc mockMvc;
-    
+
     @MockBean
     private BookService bookService;
-    
+
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
-    private UserService userService;
-    
     private List<BookDto> books;
-    
+
     @BeforeEach
     void setUp() {
         books = List.of(
@@ -72,7 +59,7 @@ class BookControllerTest {
                 )
         );
     }
-    
+
     @DisplayName("должен возвращать все книги")
     @Test
     void shouldFindAllBooks() throws Exception {
@@ -85,7 +72,7 @@ class BookControllerTest {
 
         verify(bookService, times((1))).findAll();
     }
-    
+
     @DisplayName("должен возвращать книгу по id")
     @Test
     void shouldFindBookById() throws Exception {
@@ -99,7 +86,7 @@ class BookControllerTest {
 
         verify(bookService, times(1)).findById(anyLong());
     }
-    
+
     @DisplayName("должен добавлять новую книгу")
     @Test
     void shouldCreateNewBook() throws Exception {
@@ -118,7 +105,7 @@ class BookControllerTest {
 
         verify(bookService, times(1)).insert(anyString(), anyLong(), any());
     }
-    
+
     @DisplayName("должен обновлять книгу")
     @Test
     void shouldUpdateBook() throws Exception {
@@ -126,9 +113,9 @@ class BookControllerTest {
         BookDto expectedBookDto = new BookDto(updateBookDto.getId(), updateBookDto.getTitle(),
                 new AuthorDto(2, "Author_2"),
                 List.of(new GenreDto(3, "Genre_3"), new GenreDto(4, "Genre_4")));
-        
+
         when(bookService.update(anyLong(), anyString(), anyLong(), any())).thenReturn(expectedBookDto);
-        
+
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/books")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateBookDto)))
@@ -138,7 +125,7 @@ class BookControllerTest {
 
         verify(bookService, times(1)).update(anyLong(), anyString(), anyLong(), any());
     }
-    
+
     @DisplayName("должен удалять книгу по id")
     @Test
     void shouldDeleteBook() throws Exception {

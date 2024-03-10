@@ -10,6 +10,11 @@ public class ApiGatewayConfiguration {
 
     @Bean
     public RouteLocator myRoutes(RouteLocatorBuilder builder) {
-        return builder.routes().build();
+        return builder.routes()
+                .route("library-client", p -> p
+                        .path("/library-client/**")
+                        .filters(f -> f.stripPrefix(1))
+                        .uri("lb://LIBRARY-CLIENT"))
+                .build();
     }
 }

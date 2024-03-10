@@ -2,7 +2,7 @@ spring:
   application:
     name: library-service-gateway
 server:
-  port: 8765
+  port: 8080
 
 eureka:
   client:

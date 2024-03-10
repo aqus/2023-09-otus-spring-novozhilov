@@ -47,6 +47,6 @@ eureka:
     leaseRenewalIntervalInSeconds: 30
     leaseExpirationDurationInSeconds: 90
     instance-id: ${spring.application.name}:${server.port}
-    prefer-ip-address: true\
+    prefer-ip-address: true
   server:
     eviction-interval-timer-in-ms: 15000
