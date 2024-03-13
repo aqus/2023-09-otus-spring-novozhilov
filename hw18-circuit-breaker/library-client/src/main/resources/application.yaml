@@ -15,6 +15,9 @@ resilience4j:
     configs:
       default:
         registerHealthIndicator: true
+        slidingWindowSize: 50
+        slidingWindowType: TIME_BASED
+        failureRateThreshold: 25
 
 eureka:
   client:
