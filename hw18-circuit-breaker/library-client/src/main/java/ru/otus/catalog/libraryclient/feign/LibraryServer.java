@@ -15,30 +15,22 @@ import ru.otus.catalog.dto.UpdateBookDto;
 
 import java.util.List;
 
-@FeignClient(name = "library-server")
+@FeignClient(name = "library-server", fallback = LibraryServerFallback.class)
 public interface LibraryServer {
 
-    @CircuitBreaker(name = "getBooks", fallbackMethod = "buildFallbackBooks")
+    @CircuitBreaker(name = "getBooks")
     @GetMapping("/api/v1/books")
     List<BookDto> getAllBooks();
 
-    default List<BookDto> buildFallbackBooks(Throwable throwable) {
-        return List.of(new BookDto(1L, "fallbackBook", null, null));
-    }
-
-    @CircuitBreaker(name = "getBook", fallbackMethod = "buildFallbackBook")
+    @CircuitBreaker(name = "getBook")
     @GetMapping("/api/v1/books/{id}")
     BookDto getBookById(@PathVariable("id") long id);
 
-    default BookDto buildFallbackBook(Throwable throwable) {
-        return new BookDto(1L, "fallbackBook", null, null);
-    }
-
-    @CircuitBreaker(name = "saveBook", fallbackMethod = "buildFallbackBook")
+    @CircuitBreaker(name = "saveBook")
     @PostMapping("/api/v1/books")
     BookDto insertBook(@RequestBody @Valid CreateBookDto bookCreateDto);
 
-    @CircuitBreaker(name = "updateBook", fallbackMethod = "buildFallbackBook")
+    @CircuitBreaker(name = "updateBook")
     @PutMapping("/api/v1/books")
     BookDto updateBook(@RequestBody @Valid UpdateBookDto bookUpdateDto);
 
