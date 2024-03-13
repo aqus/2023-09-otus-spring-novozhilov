@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    # update properties in application.yml
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/library
+      - SPRING_DATASOURCE_USERNAME=pguser
+      - SPRING_DATASOURCE_PASSWORD=pgpass
+      - SERVER_PORT=8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: "postgres:16"
+    ports:
+      - "6432:5432"
+    environment:
+      - POSTGRES_USER=pguser
+      - POSTGRES_PASSWORD=pgpass
+      - POSTGRES_DB=library
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pguser -d library"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
