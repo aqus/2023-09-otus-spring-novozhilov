@@ -16,7 +16,7 @@ import ru.otus.catalog.dto.UpdateBookDto;
 import java.util.List;
 
 @FeignClient(name = "library-server")
-public interface LibraryServerProxy {
+public interface LibraryServer {
 
     @CircuitBreaker(name = "getBooks", fallbackMethod = "buildFallbackBooks")
     @GetMapping("/api/v1/books")
