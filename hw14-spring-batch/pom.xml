@@ -15,11 +15,14 @@
 	<description>Spring Batch project</description>
 	<properties>
 		<java.version>17</java.version>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
 		<checkstyle-plugin.version>3.2.2</checkstyle-plugin.version>
 		<checkstyle.version>10.11.0</checkstyle.version>
 		<checkstyle.config.url>
 			https://raw.githubusercontent.com/OtusTeam/Spring/master/checkstyle.xml
 		</checkstyle.config.url>
+		<spring.shell.version>3.1.4</spring.shell.version>
 		<mongock.version>4.3.8</mongock.version>
 		<flapdoodle.version>4.10.1</flapdoodle.version>
 	</properties>
@@ -29,12 +32,28 @@
 			<artifactId>spring-boot-starter-batch</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.shell</groupId>
+			<artifactId>spring-shell-starter</artifactId>
+			<version>${spring.shell.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.shell</groupId>
+			<artifactId>spring-shell-standard</artifactId>
+			<version>${spring.shell.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.github.cloudyrock.mongock</groupId>
