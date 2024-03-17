@@ -17,6 +17,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import java.util.List;
+
 @Entity
 @Table(name = "books")
 @NamedEntityGraph(

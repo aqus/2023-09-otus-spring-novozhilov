@@ -14,9 +14,10 @@ import static ru.otus.catalog.configs.AuthorConfigJob.IMPORT_AUTHOR_JOB_NAME;
 public class AuthorCleanUpService {
 
     private static final Logger LOG = Logger.getLogger(AuthorCleanUpService.class.getName());
-    protected final AuthorRepository authorRepository;
 
-    protected final BatchService batchService;
+    private final AuthorRepository authorRepository;
+
+    private final BatchService batchService;
 
     public AuthorCleanUpService(AuthorRepository authorRepository, BatchService batchService) {
         this.authorRepository = authorRepository;

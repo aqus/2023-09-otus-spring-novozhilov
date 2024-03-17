@@ -94,66 +94,31 @@ public class AuthorConfigJob {
     }
 
     @Bean
-    public Step transformAuthorStep(
-            JpaPagingItemReader<Author> reader,
-            MongoItemWriter<MongoAuthor> writer,
-            ItemProcessor<Author, MongoAuthor> processor) {
-
+    public Step transformAuthorStep(JpaPagingItemReader<Author> reader, MongoItemWriter<MongoAuthor> writer,
+                                    ItemProcessor<Author, MongoAuthor> processor) {
         return new StepBuilder("transformAuthorStep", jobRepository)
                 .<Author, MongoAuthor>chunk(CHUNK_SIZE, platformTransactionManager)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
                 .listener(new ItemReadListener<>() {
-                    public void beforeRead() {
-                        LOG.info("Начало ощи");
-                    }
-
-                    public void afterRead(@NonNull Author o) {
-                        LOG.info("Конец чтения");
-                    }
-
                     public void onReadError(@NonNull Exception e) {
-                        LOG.info("Ошибка чтения");
+                        LOG.info("Ошибка чтения автора");
                     }
                 })
                 .listener(new ItemWriteListener<MongoAuthor>() {
-                    public void beforeWrite(@NonNull List<MongoAuthor> list) {
-                        LOG.info("Начало записи");
-                    }
-
-                    public void afterWrite(@NonNull List<MongoAuthor> list) {
-                        LOG.info("Конец записи");
-                    }
-
                     public void onWriteError(@NonNull Exception e, @NonNull List<MongoAuthor> list) {
-                        LOG.info("Ошибка записи");
+                        LOG.info("Ошибка записи автора");
                     }
                 })
                 .listener(new ItemProcessListener<>() {
-                    public void beforeProcess(@NonNull Author o) {
-                        LOG.info("Начало обработки");
-                    }
-
-                    public void afterProcess(@NonNull Author o, MongoAuthor o2) {
-                        LOG.info("Конец обработки");
-                    }
-
                     public void onProcessError(@NonNull Author o, @NonNull Exception e) {
-                        LOG.info("Ошибка обработки");
+                        LOG.info("Ошибка обработки автора");
                     }
                 })
                 .listener(new ChunkListener() {
-                    public void beforeChunk(@NonNull ChunkContext chunkContext) {
-                        LOG.info("Начало пачки");
-                    }
-
-                    public void afterChunk(@NonNull ChunkContext chunkContext) {
-                        LOG.info("Конец пачки");
-                    }
-
                     public void afterChunkError(@NonNull ChunkContext chunkContext) {
-                        LOG.info("Ошибка пачки");
+                        LOG.info("Ошибка чанка с авторами");
                     }
                 })
                 .build();

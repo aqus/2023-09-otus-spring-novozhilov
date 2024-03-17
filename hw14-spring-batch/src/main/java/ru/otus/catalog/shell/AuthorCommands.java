@@ -19,7 +19,8 @@ public class AuthorCommands {
 
     private final JobExplorer jobExplorer;
 
-    public AuthorCommands(ApplicationConfiguration applicationConfiguration, JobOperator jobOperator, JobExplorer jobExplorer) {
+    public AuthorCommands(ApplicationConfiguration applicationConfiguration, JobOperator jobOperator,
+                          JobExplorer jobExplorer) {
         this.applicationConfiguration = applicationConfiguration;
         this.jobOperator = jobOperator;
         this.jobExplorer = jobExplorer;

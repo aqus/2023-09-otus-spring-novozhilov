@@ -20,7 +20,7 @@ public class Batch {
 
     private String exportLink;
 
-    boolean imported;
+    private boolean imported;
 
     public Batch(String className, String importLink, String exportLink, boolean imported) {
         this.className = className;
