@@ -101,27 +101,35 @@ public class AuthorConfigJob {
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
-                .listener(new ItemReadListener<>() {
-                    public void onReadError(@NonNull Exception e) {
-                        LOG.info("Ошибка чтения автора");
-                    }
-                })
-                .listener(new ItemWriteListener<MongoAuthor>() {
-                    public void onWriteError(@NonNull Exception e, @NonNull List<MongoAuthor> list) {
-                        LOG.info("Ошибка записи автора");
-                    }
-                })
-                .listener(new ItemProcessListener<>() {
-                    public void onProcessError(@NonNull Author o, @NonNull Exception e) {
-                        LOG.info("Ошибка обработки автора");
-                    }
-                })
-                .listener(new ChunkListener() {
-                    public void afterChunkError(@NonNull ChunkContext chunkContext) {
-                        LOG.info("Ошибка чанка с авторами");
-                    }
-                })
+                .listener(new AuthorReadListener())
+                .listener(new AuthorWriteListener())
+                .listener(new AuthorProcessListener())
+                .listener(new AuthorChunkListener())
                 .build();
+    }
+
+    private static class AuthorReadListener implements ItemReadListener<MongoAuthor> {
+        public void onReadError(@NonNull Exception e) {
+            LOG.info("Ошибка чтения автора");
+        }
+    }
+
+    private static class AuthorWriteListener implements ItemWriteListener<MongoAuthor> {
+        public void onWriteError(@NonNull Exception e, @NonNull List<MongoAuthor> list) {
+            LOG.info("Ошибка записи автора");
+        }
+    }
+
+    private static class AuthorProcessListener implements ItemProcessListener<Author, MongoAuthor> {
+        public void onProcessError(@NonNull Author o, @NonNull Exception e) {
+            LOG.info("Ошибка обработки автора");
+        }
+    }
+
+    private static class AuthorChunkListener implements ChunkListener {
+        public void afterChunkError(@NonNull ChunkContext chunkContext) {
+            LOG.info("Ошибка чанка с авторами");
+        }
     }
 
     @Bean
