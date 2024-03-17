@@ -1,4 +1,4 @@
-package ru.otus.catalog.models;
+package ru.otus.catalog.models.relational;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

@@ -1,7 +1,7 @@
 package ru.otus.catalog.services;
 
 import org.springframework.stereotype.Service;
-import ru.otus.catalog.models.Batch;
+import ru.otus.catalog.models.relational.Batch;
 import ru.otus.catalog.repositories.BatchRepository;
 
 import java.util.List;
