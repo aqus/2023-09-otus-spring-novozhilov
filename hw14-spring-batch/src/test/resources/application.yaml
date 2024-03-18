@@ -1,0 +1,45 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+  shell:
+    interactive:
+      enabled: false
+    noninteractive:
+      enabled: true
+    command:
+      version:
+        enabled: false
+
+  batch:
+    driver-class-name: org.h2.Driver
+    initialize-schema: ALWAYS
+    job:
+      enabled: false
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+
+  data:
+    mongodb:
+      host: localhost
+      port: 0
+      database: SpringBatchTestDB
+
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 4.0.2
+
+mongock:
+  runner-type: "ApplicationRunner"
+  change-logs-scan-package:
+    - ru.otus.catalog.changelogs
+  mongo-db:
+    write-concern:
+      journal: false
+    read-concern: local
