@@ -13,6 +13,5 @@ public class MongoDBChangelog {
         db.createCollection("authors");
         db.createCollection("genres");
         db.createCollection("books");
-        db.createCollection("comments");
     }
 }

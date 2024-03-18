@@ -31,7 +31,7 @@ import ru.otus.catalog.models.nosql.MongoGenre;
 import ru.otus.catalog.models.relational.Author;
 import ru.otus.catalog.models.relational.Genre;
 import ru.otus.catalog.services.BatchService;
-import ru.otus.catalog.services.cleanup.GenreCleanUpService;
+import ru.otus.catalog.services.cleanup.GenreCleanupService;
 import ru.otus.catalog.services.processors.GenreProcessor;
 
 import java.util.List;
@@ -44,7 +44,7 @@ public class GenreConfigJob {
 
     private static final int CHUNK_SIZE = 2;
 
-    private static final Logger LOG = Logger.getLogger(AuthorConfigJob.class.getName());
+    private static final Logger LOG = Logger.getLogger(GenreConfigJob.class.getName());
 
     private final JobRepository jobRepository;
 
@@ -54,11 +54,11 @@ public class GenreConfigJob {
 
     private final BatchService batchService;
 
-    private final GenreCleanUpService genreCleanUpService;
+    private final GenreCleanupService genreCleanUpService;
 
     public GenreConfigJob(JobRepository jobRepository, PlatformTransactionManager platformTransactionManager,
                           EntityManagerFactory entityManagerFactory, BatchService batchService,
-                          GenreCleanUpService genreCleanUpService) {
+                          GenreCleanupService genreCleanUpService) {
         this.jobRepository = jobRepository;
         this.platformTransactionManager = platformTransactionManager;
         this.entityManagerFactory = entityManagerFactory;

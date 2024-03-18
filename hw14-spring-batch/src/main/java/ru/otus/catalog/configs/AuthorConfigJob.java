@@ -30,7 +30,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import ru.otus.catalog.models.nosql.MongoAuthor;
 import ru.otus.catalog.models.relational.Author;
 import ru.otus.catalog.services.BatchService;
-import ru.otus.catalog.services.cleanup.AuthorCleanUpService;
+import ru.otus.catalog.services.cleanup.AuthorCleanupService;
 import ru.otus.catalog.services.processors.AuthorProcessor;
 
 import java.util.List;
@@ -53,11 +53,11 @@ public class AuthorConfigJob {
 
     private final BatchService batchService;
 
-    private final AuthorCleanUpService authorCleanUpService;
+    private final AuthorCleanupService authorCleanUpService;
 
     public AuthorConfigJob(JobRepository jobRepository, PlatformTransactionManager platformTransactionManager,
                            EntityManagerFactory entityManagerFactory, BatchService batchService,
-                           AuthorCleanUpService authorCleanUpService) {
+                           AuthorCleanupService authorCleanUpService) {
         this.jobRepository = jobRepository;
         this.platformTransactionManager = platformTransactionManager;
         this.entityManagerFactory = entityManagerFactory;

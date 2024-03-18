@@ -11,16 +11,16 @@ import java.util.logging.Logger;
 import static ru.otus.catalog.configs.GenreConfigJob.IMPORT_GENRE_JOB_NAME;
 
 @Service
-public class GenreCleanUpService {
+public class GenreCleanupService {
 
-    private static final Logger LOG = Logger.getLogger(GenreCleanUpService.class.getName());
+    private static final Logger LOG = Logger.getLogger(GenreCleanupService.class.getName());
 
     private final GenreRepository genreRepository;
 
     private final BatchService batchService;
 
 
-    public GenreCleanUpService(GenreRepository genreRepository, BatchService batchService) {
+    public GenreCleanupService(GenreRepository genreRepository, BatchService batchService) {
         this.genreRepository = genreRepository;
         this.batchService = batchService;
     }
