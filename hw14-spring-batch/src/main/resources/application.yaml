@@ -31,6 +31,12 @@ spring:
       hibernate:
         format_sql: true
 
+data:
+  mongodb:
+    port: 27017
+    host: localhost
+    database: batch
+
 app:
   job-count: 0
   current-item-count:
@@ -39,11 +45,6 @@ app:
     comment: 0
     genre: 0
 
-data:
-  mongodb:
-    port: 27017
-    host: localhost
-    database: batch
 
 de:
   flapdoodle:
@@ -57,11 +58,6 @@ de:
   config:
     activate:
       on-profile: ide
-
-batch:
-  initialize-schema: never
-  initializer:
-    enabled: false
 
 mongock:
   #  runner-type: "ApplicationRunner" # default
