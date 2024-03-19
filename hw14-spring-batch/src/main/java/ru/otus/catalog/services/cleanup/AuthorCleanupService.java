@@ -24,7 +24,6 @@ public class AuthorCleanupService {
         this.batchService = batchService;
     }
 
-    @SuppressWarnings("unused")
     public void cleanUp() {
         LOG.info("Выполняю завершающие мероприятия...");
         List<Long> exported = batchService.saveAllImported(IMPORT_AUTHOR_JOB_NAME);
