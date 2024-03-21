@@ -18,12 +18,9 @@ public class Author {
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
-    private boolean imported;
-
-    public Author(long id, String fullName, boolean imported) {
+    public Author(long id, String fullName) {
         this.id = id;
         this.fullName = fullName;
-        this.imported = imported;
     }
 
     public Author() {
@@ -45,11 +42,4 @@ public class Author {
         this.fullName = fullName;
     }
 
-    public boolean isImported() {
-        return imported;
-    }
-
-    public void setImported(boolean imported) {
-        this.imported = imported;
-    }
 }

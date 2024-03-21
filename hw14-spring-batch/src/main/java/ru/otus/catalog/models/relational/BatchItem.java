@@ -7,8 +7,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "batches")
-public class Batch {
+@Table(name = "batch_items")
+public class BatchItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,16 +20,13 @@ public class Batch {
 
     private String exportLink;
 
-    private boolean imported;
-
-    public Batch(String className, String importLink, String exportLink, boolean imported) {
+    public BatchItem(String className, String importLink, String exportLink) {
         this.className = className;
         this.importLink = importLink;
         this.exportLink = exportLink;
-        this.imported = imported;
     }
 
-    public Batch() {
+    public BatchItem() {
     }
 
     public long getId() {
@@ -64,11 +61,4 @@ public class Batch {
         this.exportLink = exportLink;
     }
 
-    public boolean isImported() {
-        return imported;
-    }
-
-    public void setImported(boolean imported) {
-        this.imported = imported;
-    }
 }

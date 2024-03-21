@@ -2,7 +2,7 @@ package ru.otus.catalog.services.mongo;
 
 import org.springframework.stereotype.Service;
 import ru.otus.catalog.models.nosql.MongoGenre;
-import ru.otus.catalog.models.relational.Batch;
+import ru.otus.catalog.models.relational.BatchItem;
 import ru.otus.catalog.repositories.mongo.MongoGenreRepository;
 import ru.otus.catalog.repositories.relational.BatchRepository;
 
@@ -25,7 +25,7 @@ public class MongoGenreService {
 
     @Nullable
     public MongoGenre findById(String id) {
-        Optional<Batch> optionalBatch = batchRepository.findByImportLink(IMPORT_GENRE_JOB_NAME, id);
+        Optional<BatchItem> optionalBatch = batchRepository.findByImportLink(IMPORT_GENRE_JOB_NAME, id);
         MongoGenre genre = null;
 
         if (optionalBatch.isPresent()) {

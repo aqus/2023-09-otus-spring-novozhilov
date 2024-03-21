@@ -46,14 +46,11 @@ public class Book {
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<Genre> genres;
 
-    private boolean imported;
-
-    public Book(long id, String title, Author author, List<Genre> genres, boolean imported) {
+    public Book(long id, String title, Author author, List<Genre> genres) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.genres = genres;
-        this.imported = imported;
     }
 
     public Book() {
@@ -91,11 +88,4 @@ public class Book {
         this.genres = genres;
     }
 
-    public boolean isImported() {
-        return imported;
-    }
-
-    public void setImported(boolean imported) {
-        this.imported = imported;
-    }
 }

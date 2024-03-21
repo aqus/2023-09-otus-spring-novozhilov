@@ -72,7 +72,7 @@ public class BookConfigJob {
         return new JpaPagingItemReaderBuilder<Book>()
                 .name("bookItemReader")
                 .entityManagerFactory(entityManagerFactory)
-                .queryString("SELECT b FROM Book b WHERE b.imported = false")
+                .queryString("SELECT b FROM Book b")
                 .currentItemCount(Integer.parseInt(currentItemCount))
                 .pageSize(CHUNK_SIZE)
                 .build();

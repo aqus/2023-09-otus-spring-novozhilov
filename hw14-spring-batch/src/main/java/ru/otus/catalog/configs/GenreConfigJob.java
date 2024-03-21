@@ -73,7 +73,7 @@ public class GenreConfigJob {
         return new JpaPagingItemReaderBuilder<Genre>()
                 .name("genreItemReader")
                 .entityManagerFactory(entityManagerFactory)
-                .queryString("SELECT g FROM Genre g WHERE g.imported = false")
+                .queryString("SELECT g FROM Genre g")
                 .currentItemCount(Integer.parseInt(currentItemCount))
                 .pageSize(CHUNK_SIZE)
                 .build();
@@ -82,7 +82,7 @@ public class GenreConfigJob {
     @StepScope()
     @Bean
     public GenreProcessor genreProcessor() {
-        return new GenreProcessor(batchService);
+        return new GenreProcessor();
     }
 
     @StepScope()
@@ -137,12 +137,13 @@ public class GenreConfigJob {
         }
     }
 
-    private static class GenreProcessListener implements ItemProcessListener<Genre, MongoGenre> {
+    private class GenreProcessListener implements ItemProcessListener<Genre, MongoGenre> {
         public void beforeProcess(@NonNull Genre o) {
             LOG.info("Начало обработки");
         }
 
         public void afterProcess(@NonNull Genre o, MongoGenre o2) {
+            batchService.insert(IMPORT_GENRE_JOB_NAME, String.valueOf(o.getId()), o2.getId());
             LOG.info("Конец обработки");
         }
 

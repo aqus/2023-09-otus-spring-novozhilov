@@ -72,7 +72,7 @@ public class AuthorConfigJob {
         return new JpaPagingItemReaderBuilder<Author>()
                 .name("authorItemReader")
                 .entityManagerFactory(entityManagerFactory)
-                .queryString("SELECT a FROM Author a WHERE a.imported = false")
+                .queryString("SELECT a FROM Author a")
                 .currentItemCount(Integer.parseInt(currentItemCount))
                 .pageSize(CHUNK_SIZE)
                 .build();
@@ -90,7 +90,7 @@ public class AuthorConfigJob {
     @StepScope()
     @Bean
     public AuthorProcessor authorItemProcessor() {
-        return new AuthorProcessor(batchService);
+        return new AuthorProcessor();
     }
 
     @Bean
@@ -120,7 +120,12 @@ public class AuthorConfigJob {
         }
     }
 
-    private static class AuthorProcessListener implements ItemProcessListener<Author, MongoAuthor> {
+    private class AuthorProcessListener implements ItemProcessListener<Author, MongoAuthor> {
+        @Override
+        public void afterProcess(Author item, MongoAuthor result) {
+            batchService.insert(IMPORT_AUTHOR_JOB_NAME, String.valueOf(item.getId()), result.getId());
+        }
+
         public void onProcessError(@NonNull Author o, @NonNull Exception e) {
             LOG.info("Ошибка обработки автора");
         }

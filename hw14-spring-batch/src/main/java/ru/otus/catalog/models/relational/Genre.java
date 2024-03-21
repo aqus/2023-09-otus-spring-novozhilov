@@ -18,12 +18,9 @@ public class Genre {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    private boolean imported;
-
-    public Genre(long id, String name, boolean imported) {
+    public Genre(long id, String name) {
         this.id = id;
         this.name = name;
-        this.imported = imported;
     }
 
     public Genre() {
@@ -45,11 +42,4 @@ public class Genre {
         this.name = name;
     }
 
-    public boolean isImported() {
-        return imported;
-    }
-
-    public void setImported(boolean imported) {
-        this.imported = imported;
-    }
 }

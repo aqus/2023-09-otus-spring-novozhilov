@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import ru.otus.catalog.models.nosql.MongoAuthor;
 import ru.otus.catalog.models.nosql.MongoBook;
 import ru.otus.catalog.models.nosql.MongoGenre;
-import ru.otus.catalog.models.relational.Batch;
+import ru.otus.catalog.models.relational.BatchItem;
 import ru.otus.catalog.models.relational.Book;
 import ru.otus.catalog.repositories.mongo.MongoBookRepository;
 import ru.otus.catalog.repositories.relational.BatchRepository;
@@ -37,7 +37,7 @@ public class MongoBookService {
 
     @Nullable
     public MongoBook findById(String id) {
-        Optional<Batch> optionalBatch = batchRepository.findByImportLink(IMPORT_BOOK_JOB_NAME, id);
+        Optional<BatchItem> optionalBatch = batchRepository.findByImportLink(IMPORT_BOOK_JOB_NAME, id);
         MongoBook book = null;
 
         if (optionalBatch.isPresent()) {
