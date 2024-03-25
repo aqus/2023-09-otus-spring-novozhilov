@@ -79,13 +79,11 @@ public class GenreConfigJob {
                 .build();
     }
 
-    @StepScope()
     @Bean
     public GenreProcessor genreProcessor() {
         return new GenreProcessor();
     }
 
-    @StepScope()
     @Bean
     public MongoItemWriter<MongoGenre> genreItemWriter(MongoTemplate mongoTemplate) {
         return new MongoItemWriterBuilder<MongoGenre>()

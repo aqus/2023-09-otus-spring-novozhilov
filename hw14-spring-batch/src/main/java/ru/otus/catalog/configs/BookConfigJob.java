@@ -78,13 +78,11 @@ public class BookConfigJob {
                 .build();
     }
 
-    @StepScope()
     @Bean
     public BookProcessor bookItemProcessor() {
         return new BookProcessor(mongoBookService);
     }
 
-    @StepScope()
     @Bean
     public MongoItemWriter<MongoBook> bookItemWriter(MongoTemplate mongoTemplate) {
         return new MongoItemWriterBuilder<MongoBook>()

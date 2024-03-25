@@ -78,7 +78,6 @@ public class AuthorConfigJob {
                 .build();
     }
 
-    @StepScope()
     @Bean
     public MongoItemWriter<MongoAuthor> authorItemWriter(MongoTemplate mongoTemplate) {
         return new MongoItemWriterBuilder<MongoAuthor>()
@@ -87,7 +86,6 @@ public class AuthorConfigJob {
                 .build();
     }
 
-    @StepScope()
     @Bean
     public AuthorProcessor authorItemProcessor() {
         return new AuthorProcessor();
