@@ -1,6 +1,5 @@
 package ru.otus.catalog.models.nosql;
 
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -14,8 +13,8 @@ public class MongoGenre {
     @Indexed(unique = true)
     private String name;
 
-    public MongoGenre(String name) {
-        this.id = ObjectId.get().toString();
+    public MongoGenre(String id, String name) {
+        this.id = id;
         this.name = name;
     }
 

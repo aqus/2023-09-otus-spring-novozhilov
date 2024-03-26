@@ -1,6 +1,5 @@
 package ru.otus.catalog.models.nosql;
 
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -15,8 +14,8 @@ public class MongoAuthor {
     private String fullName;
 
 
-    public MongoAuthor(String fullName) {
-        this.id = ObjectId.get().toString();
+    public MongoAuthor(String id, String fullName) {
+        this.id = id;
         this.fullName = fullName;
     }
 

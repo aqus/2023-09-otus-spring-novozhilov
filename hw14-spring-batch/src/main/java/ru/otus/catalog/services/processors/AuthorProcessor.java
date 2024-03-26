@@ -11,6 +11,6 @@ public class AuthorProcessor implements ItemProcessor<Author, MongoAuthor> {
 
     @Override
     public MongoAuthor process(Author author) throws Exception {
-        return new MongoAuthor(author.getFullName());
+        return new MongoAuthor(String.valueOf(author.getId()), author.getFullName());
     }
 }

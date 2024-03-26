@@ -1,8 +1,8 @@
 package ru.otus.catalog.configs;
 
 import jakarta.persistence.EntityManagerFactory;
+import org.bson.types.ObjectId;
 import org.springframework.batch.core.ChunkListener;
-import org.springframework.batch.core.ItemProcessListener;
 import org.springframework.batch.core.ItemReadListener;
 import org.springframework.batch.core.ItemWriteListener;
 import org.springframework.batch.core.Job;
@@ -15,7 +15,6 @@ import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.data.MongoItemWriter;
 import org.springframework.batch.item.data.builder.MongoItemWriterBuilder;
@@ -29,12 +28,14 @@ import org.springframework.lang.NonNull;
 import org.springframework.transaction.PlatformTransactionManager;
 import ru.otus.catalog.models.nosql.MongoGenre;
 import ru.otus.catalog.models.relational.Author;
+import ru.otus.catalog.models.relational.BatchItem;
 import ru.otus.catalog.models.relational.Genre;
 import ru.otus.catalog.services.BatchService;
-import ru.otus.catalog.services.cleanup.GenreCleanupService;
 import ru.otus.catalog.services.processors.GenreProcessor;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 @Configuration
@@ -54,16 +55,12 @@ public class GenreConfigJob {
 
     private final BatchService batchService;
 
-    private final GenreCleanupService genreCleanUpService;
-
     public GenreConfigJob(JobRepository jobRepository, PlatformTransactionManager platformTransactionManager,
-                          EntityManagerFactory entityManagerFactory, BatchService batchService,
-                          GenreCleanupService genreCleanUpService) {
+                          EntityManagerFactory entityManagerFactory, BatchService batchService) {
         this.jobRepository = jobRepository;
         this.platformTransactionManager = platformTransactionManager;
         this.entityManagerFactory = entityManagerFactory;
         this.batchService = batchService;
-        this.genreCleanUpService = genreCleanUpService;
     }
 
     @StepScope()
@@ -99,77 +96,50 @@ public class GenreConfigJob {
                 .<Genre, MongoGenre>chunk(CHUNK_SIZE, platformTransactionManager)
                 .reader(reader)
                 .processor(processor)
-                .writer(writer)
+                .writer(mongoGenres -> {
+                    Map<String, String> relationalToDocumentId = new HashMap<>(mongoGenres.size());
+                    List<BatchItem> batchItems = mongoGenres.getItems()
+                            .stream()
+                            .map(mg -> {
+                                String relationalId = mg.getId();
+                                relationalToDocumentId.put(relationalId, ObjectId.get().toString());
+                                return new BatchItem(IMPORT_GENRE_JOB_NAME, relationalId,
+                                        relationalToDocumentId.get(relationalId));
+                            }).toList();
+                    batchService.saveAll(batchItems);
+                    mongoGenres.getItems().forEach(mongoAuthor ->
+                            mongoAuthor.setId(relationalToDocumentId.get(mongoAuthor.getId())));
+                    writer.write(mongoGenres);
+                })
                 .listener(new GenreItemReadListener())
                 .listener(new GenreItemWriteListener())
-                .listener(new GenreProcessListener())
                 .listener(new GenreChunkListener())
                 .build();
     }
 
     private static class GenreItemReadListener implements ItemReadListener<Author> {
-        public void beforeRead() {
-            LOG.info("Начало чтения");
-        }
-
-        public void afterRead(@NonNull Genre o) {
-            LOG.info("Конец чтения");
-        }
-
         public void onReadError(@NonNull Exception e) {
             LOG.info("Ошибка чтения");
         }
     }
 
     private static class GenreItemWriteListener implements ItemWriteListener<MongoGenre> {
-        public void beforeWrite(@NonNull List<MongoGenre> list) {
-            LOG.info("Начало записи");
-        }
-
-        public void afterWrite(@NonNull List<MongoGenre> list) {
-            LOG.info("Конец записи");
-        }
-
         public void onWriteError(@NonNull Exception e, @NonNull List<MongoGenre> list) {
             LOG.info("Ошибка записи");
         }
     }
 
-    private class GenreProcessListener implements ItemProcessListener<Genre, MongoGenre> {
-        public void beforeProcess(@NonNull Genre o) {
-            LOG.info("Начало обработки");
-        }
-
-        public void afterProcess(@NonNull Genre o, MongoGenre o2) {
-            batchService.insert(IMPORT_GENRE_JOB_NAME, String.valueOf(o.getId()), o2.getId());
-            LOG.info("Конец обработки");
-        }
-
-        public void onProcessError(@NonNull Genre o, @NonNull Exception e) {
-            LOG.info("Ошибка обработки");
-        }
-    }
-
     private static class GenreChunkListener implements ChunkListener {
-        public void beforeChunk(@NonNull ChunkContext chunkContext) {
-            LOG.info("Начало пачки");
-        }
-
-        public void afterChunk(@NonNull ChunkContext chunkContext) {
-            LOG.info("Конец пачки");
-        }
-
         public void afterChunkError(@NonNull ChunkContext chunkContext) {
             LOG.info("Ошибка пачки");
         }
     }
 
     @Bean
-    public Job importGenreJob(Step transformGenreStep, Step cleanUpGenreStep) {
+    public Job importGenreJob(Step transformGenreStep) {
         return new JobBuilder(IMPORT_GENRE_JOB_NAME, jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .flow(transformGenreStep)
-                .next(cleanUpGenreStep)
                 .end()
                 .listener(new JobExecutionListener() {
                     @Override
@@ -182,23 +152,6 @@ public class GenreConfigJob {
                         LOG.info("Конец job");
                     }
                 })
-                .build();
-    }
-
-    @Bean
-    public MethodInvokingTaskletAdapter cleanUpGenreTasklet() {
-        MethodInvokingTaskletAdapter adapter = new MethodInvokingTaskletAdapter();
-
-        adapter.setTargetObject(genreCleanUpService);
-        adapter.setTargetMethod("cleanUp");
-
-        return adapter;
-    }
-
-    @Bean
-    public Step cleanUpGenreStep() {
-        return new StepBuilder("cleanUpGenreStep", jobRepository)
-                .tasklet(cleanUpGenreTasklet(), platformTransactionManager)
                 .build();
     }
 }

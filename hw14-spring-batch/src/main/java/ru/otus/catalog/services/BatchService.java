@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 import ru.otus.catalog.models.relational.BatchItem;
 import ru.otus.catalog.repositories.relational.BatchRepository;
 
+import java.util.List;
+
 @Service
 public class BatchService {
 
@@ -13,7 +15,7 @@ public class BatchService {
         this.batchRepository = batchRepository;
     }
 
-    public void insert(String className, String importId, String exportId) {
-        batchRepository.save(new BatchItem(className, importId, exportId));
+    public void saveAll(List<BatchItem> batchItems) {
+        batchRepository.saveAll(batchItems);
     }
 }

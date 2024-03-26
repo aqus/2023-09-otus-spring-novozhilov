@@ -15,7 +15,6 @@ import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.data.MongoItemWriter;
 import org.springframework.batch.item.data.builder.MongoItemWriterBuilder;
@@ -29,7 +28,6 @@ import org.springframework.lang.NonNull;
 import org.springframework.transaction.PlatformTransactionManager;
 import ru.otus.catalog.models.nosql.MongoBook;
 import ru.otus.catalog.models.relational.Book;
-import ru.otus.catalog.services.cleanup.BookCleanupService;
 import ru.otus.catalog.services.mongo.MongoBookService;
 import ru.otus.catalog.services.processors.BookProcessor;
 
@@ -51,17 +49,14 @@ public class BookConfigJob {
 
     private final EntityManagerFactory entityManagerFactory;
 
-    private final BookCleanupService bookCleanupService;
-
     private final MongoBookService mongoBookService;
 
     public BookConfigJob(JobRepository jobRepository, PlatformTransactionManager platformTransactionManager,
-                         EntityManagerFactory entityManagerFactory, BookCleanupService bookCleanupService,
+                         EntityManagerFactory entityManagerFactory,
                          MongoBookService mongoBookService) {
         this.jobRepository = jobRepository;
         this.platformTransactionManager = platformTransactionManager;
         this.entityManagerFactory = entityManagerFactory;
-        this.bookCleanupService = bookCleanupService;
         this.mongoBookService = mongoBookService;
     }
 
@@ -109,67 +104,34 @@ public class BookConfigJob {
     }
 
     private static class BookReadListener implements ItemReadListener<Book> {
-        public void beforeRead() {
-            LOG.info("Начало чтения");
-        }
-
-        public void afterRead(@NonNull Book o) {
-            LOG.info("Конец чтения");
-        }
-
         public void onReadError(@NonNull Exception e) {
             LOG.info("Ошибка чтения");
         }
     }
 
     private static class BookWriteListener implements ItemWriteListener<MongoBook> {
-        public void beforeWrite(@NonNull List<MongoBook> list) {
-            LOG.info("Начало записи");
-        }
-
-        public void afterWrite(@NonNull List<MongoBook> list) {
-            LOG.info("Конец записи");
-        }
-
         public void onWriteError(@NonNull Exception e, @NonNull List<MongoBook> list) {
             LOG.info("Ошибка записи");
         }
     }
 
     private static class BookProcessListener implements ItemProcessListener<Book, MongoBook> {
-        public void beforeProcess(@NonNull Book o) {
-            LOG.info("Начало обработки");
-        }
-
-        public void afterProcess(@NonNull Book o, MongoBook o2) {
-            LOG.info("Конец обработки");
-        }
-
         public void onProcessError(@NonNull Book o, @NonNull Exception e) {
             LOG.info("Ошибка обработки");
         }
     }
 
     private static class BookChunkListener implements ChunkListener {
-        public void beforeChunk(@NonNull ChunkContext chunkContext) {
-            LOG.info("Начало пачки");
-        }
-
-        public void afterChunk(@NonNull ChunkContext chunkContext) {
-            LOG.info("Конец пачки");
-        }
-
         public void afterChunkError(@NonNull ChunkContext chunkContext) {
             LOG.info("Ошибка пачки");
         }
     }
 
     @Bean
-    public Job importBookJob(Step transformBookStep, Step cleanUpBookStep) {
+    public Job importBookJob(Step transformBookStep) {
         return new JobBuilder(IMPORT_BOOK_JOB_NAME, jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .flow(transformBookStep)
-                .next(cleanUpBookStep)
                 .end()
                 .listener(new JobExecutionListener() {
                     @Override
@@ -185,21 +147,4 @@ public class BookConfigJob {
                 .build();
     }
 
-
-    @Bean
-    public MethodInvokingTaskletAdapter cleanUpBookTasklet() {
-        MethodInvokingTaskletAdapter adapter = new MethodInvokingTaskletAdapter();
-
-        adapter.setTargetObject(bookCleanupService);
-        adapter.setTargetMethod("cleanUp");
-
-        return adapter;
-    }
-
-    @Bean
-    public Step cleanUpBookStep() {
-        return new StepBuilder("cleanUpBookStep", jobRepository)
-                .tasklet(cleanUpBookTasklet(), platformTransactionManager)
-                .build();
-    }
 }

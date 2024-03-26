@@ -11,6 +11,6 @@ public class GenreProcessor implements ItemProcessor<Genre, MongoGenre> {
 
     @Override
     public MongoGenre process(Genre genre) {
-        return new MongoGenre(genre.getName());
+        return new MongoGenre(String.valueOf(genre.getId()), genre.getName());
     }
 }

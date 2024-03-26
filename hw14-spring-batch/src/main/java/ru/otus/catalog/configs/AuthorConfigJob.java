@@ -1,8 +1,8 @@
 package ru.otus.catalog.configs;
 
 import jakarta.persistence.EntityManagerFactory;
+import org.bson.types.ObjectId;
 import org.springframework.batch.core.ChunkListener;
-import org.springframework.batch.core.ItemProcessListener;
 import org.springframework.batch.core.ItemReadListener;
 import org.springframework.batch.core.ItemWriteListener;
 import org.springframework.batch.core.Job;
@@ -15,7 +15,6 @@ import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.data.MongoItemWriter;
 import org.springframework.batch.item.data.builder.MongoItemWriterBuilder;
@@ -29,11 +28,13 @@ import org.springframework.lang.NonNull;
 import org.springframework.transaction.PlatformTransactionManager;
 import ru.otus.catalog.models.nosql.MongoAuthor;
 import ru.otus.catalog.models.relational.Author;
+import ru.otus.catalog.models.relational.BatchItem;
 import ru.otus.catalog.services.BatchService;
-import ru.otus.catalog.services.cleanup.AuthorCleanupService;
 import ru.otus.catalog.services.processors.AuthorProcessor;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 @Configuration
@@ -53,16 +54,12 @@ public class AuthorConfigJob {
 
     private final BatchService batchService;
 
-    private final AuthorCleanupService authorCleanUpService;
-
     public AuthorConfigJob(JobRepository jobRepository, PlatformTransactionManager platformTransactionManager,
-                           EntityManagerFactory entityManagerFactory, BatchService batchService,
-                           AuthorCleanupService authorCleanUpService) {
+                           EntityManagerFactory entityManagerFactory, BatchService batchService) {
         this.jobRepository = jobRepository;
         this.platformTransactionManager = platformTransactionManager;
         this.entityManagerFactory = entityManagerFactory;
         this.batchService = batchService;
-        this.authorCleanUpService = authorCleanUpService;
     }
 
     @StepScope()
@@ -98,10 +95,23 @@ public class AuthorConfigJob {
                 .<Author, MongoAuthor>chunk(CHUNK_SIZE, platformTransactionManager)
                 .reader(reader)
                 .processor(processor)
-                .writer(writer)
+                .writer(mongoAuthors -> {
+                    Map<String, String> relationalToDocumentId = new HashMap<>(mongoAuthors.size());
+                    List<BatchItem> batchItems = mongoAuthors.getItems()
+                            .stream()
+                            .map(ma -> {
+                                String relationalId = ma.getId();
+                                relationalToDocumentId.put(relationalId, ObjectId.get().toString());
+                                return new BatchItem(IMPORT_AUTHOR_JOB_NAME, relationalId,
+                                        relationalToDocumentId.get(relationalId));
+                            }).toList();
+                    batchService.saveAll(batchItems);
+                    mongoAuthors.getItems().forEach(mongoAuthor ->
+                            mongoAuthor.setId(relationalToDocumentId.get(mongoAuthor.getId())));
+                    writer.write(mongoAuthors);
+                })
                 .listener(new AuthorReadListener())
                 .listener(new AuthorWriteListener())
-                .listener(new AuthorProcessListener())
                 .listener(new AuthorChunkListener())
                 .build();
     }
@@ -118,17 +128,6 @@ public class AuthorConfigJob {
         }
     }
 
-    private class AuthorProcessListener implements ItemProcessListener<Author, MongoAuthor> {
-        @Override
-        public void afterProcess(Author item, MongoAuthor result) {
-            batchService.insert(IMPORT_AUTHOR_JOB_NAME, String.valueOf(item.getId()), result.getId());
-        }
-
-        public void onProcessError(@NonNull Author o, @NonNull Exception e) {
-            LOG.info("Ошибка обработки автора");
-        }
-    }
-
     private static class AuthorChunkListener implements ChunkListener {
         public void afterChunkError(@NonNull ChunkContext chunkContext) {
             LOG.info("Ошибка чанка с авторами");
@@ -136,11 +135,10 @@ public class AuthorConfigJob {
     }
 
     @Bean
-    public Job importAuthorJob(Step transformAuthorStep, Step cleanUpAuthorStep) {
+    public Job importAuthorJob(Step transformAuthorStep) {
         return new JobBuilder(IMPORT_AUTHOR_JOB_NAME, jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .flow(transformAuthorStep)
-                .next(cleanUpAuthorStep)
                 .end()
                 .listener(new JobExecutionListener() {
                     @Override
@@ -153,23 +151,6 @@ public class AuthorConfigJob {
                         LOG.info("Конец job");
                     }
                 })
-                .build();
-    }
-
-    @Bean
-    public MethodInvokingTaskletAdapter cleanUpAuthorTasklet() {
-        MethodInvokingTaskletAdapter adapter = new MethodInvokingTaskletAdapter();
-
-        adapter.setTargetObject(authorCleanUpService);
-        adapter.setTargetMethod("cleanUp");
-
-        return adapter;
-    }
-
-    @Bean
-    public Step cleanUpAuthorStep() {
-        return new StepBuilder("cleanUpAuthorStep", jobRepository)
-                .tasklet(cleanUpAuthorTasklet(), platformTransactionManager)
                 .build();
     }
 }
