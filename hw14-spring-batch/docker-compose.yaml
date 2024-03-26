@@ -1,0 +1,7 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongo
+    hostname: localhost
+    ports:
+      - 27017:27017
