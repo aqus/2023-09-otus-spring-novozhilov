@@ -1,0 +1,70 @@
+spring:
+  application:
+  name: hw14-spring-batch
+
+  batch:
+    driver-class-name: org.h2.Driver
+    initialize-schema: ALWAYS
+    job:
+      enabled: false
+
+    shell:
+      interactive:
+        enabled: true
+      noninteractive:
+        enabled: false
+
+  datasource:
+    url: jdbc:h2:mem:maindb
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:data.sql
+      schema-locations: classpath:schema.sql
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+
+    properties:
+      hibernate:
+        format_sql: true
+
+data:
+  mongodb:
+    port: 27017
+    host: localhost
+    database: batch
+
+app:
+  job-count: 0
+  current-item-count:
+    author: 0
+    book: 0
+    comment: 0
+    genre: 0
+
+
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 6.0.5
+    embed:
+      mongo:
+        distribution:
+          IFeatureAwareVersion: 6.0.5
+  config:
+    activate:
+      on-profile: ide
+
+mongock:
+  #  runner-type: "ApplicationRunner" # default
+  runner-type: "InitializingBean"
+  change-logs-scan-package:
+    - ru.otus.catalog.changelogs
+  mongo-db:
+    write-concern:
+      journal: false
+    read-concern: local
